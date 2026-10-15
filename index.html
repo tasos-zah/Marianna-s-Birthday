@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="el"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Ένα γράμμα για σένα</title>
+<style>
+:root{--cream:#FFF3E8;--pink:#E58BAE;--ink:#6B4A66;--soft:#F8D7E3}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--cream);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+#app{max-width:480px;margin:0 auto;min-height:100dvh;display:flex;flex-direction:column;padding-top:env(safe-area-inset-top)}
+#map{position:relative;height:min(58dvh,125vw);background:#FFE6D6;overflow:hidden}
+#map svg{width:100%;height:100%;display:block}
+#stamps{position:absolute;top:8px;right:8px;display:flex;gap:6px}
+.st{width:34px;height:34px;border-radius:8px;border:2px dashed var(--pink);background:#fff8;display:grid;place-items:center;font-size:16px;opacity:.55}
+.st.on{border-style:solid;background:#fff;opacity:1;transform:rotate(-6deg)}
+#panel{flex:1;background:#fff;border-radius:22px 22px 0 0;margin-top:-18px;position:relative;padding:20px 18px calc(24px + env(safe-area-inset-bottom));box-shadow:0 -6px 20px #e58bae22}
+h2{margin:0 0 8px;font-size:20px}p{margin:0 0 14px;line-height:1.45}
+button{font:inherit;font-weight:600;border:0;border-radius:999px;padding:13px 22px;min-height:48px;background:var(--pink);color:#fff;cursor:pointer}
+button:disabled{opacity:.45}
+button.alt{background:var(--soft);color:var(--ink)}
+.opts{display:grid;gap:10px}.opts button{background:var(--soft);color:var(--ink);text-align:left;border-radius:16px}
+.opts button.sel{background:var(--pink);color:#fff}
+input[type=email]{width:100%;font:inherit;padding:12px 14px;border:2px solid var(--soft);border-radius:14px;margin:0 0 10px}
+input[type=range]{width:100%;accent-color:var(--pink);height:40px}
+#zone{position:relative;height:110px}#zone button{position:absolute}
+#nomsg{min-height:1.4em;text-align:center}
+#dbg{display:none;white-space:pre-wrap;font:11px monospace;background:#f6f0f8;padding:8px;margin:0}
+.lb{font-size:18px;font-weight:500;fill:#6B4A66;paint-order:stroke;stroke:#fff;stroke-width:4px;stroke-linejoin:round}
+.lb2{font-size:13px;font-style:italic;fill:#6FAEC0}
+@keyframes pop{0%{opacity:1;transform:translateY(0)}100%{opacity:0;transform:translateY(-26px)}}
+#clang{opacity:0;font-weight:800;font-size:18px;fill:#C99A2E}#clang.go{animation:pop .7s ease-out}
+</style></head><body>
+<div id="app">
+<div id="map"><svg id="svg" xmlns="http://www.w3.org/2000/svg">
+<rect x="-400" y="-400" width="1500" height="1300" fill="#FFE6D6"/>
+<path d="M300 60 q30 -34 60 0 z" fill="#D8F0E3"/><path d="M450 70 q35 -40 70 0 z" fill="#F8D7E3"/><path d="M190 300 q30 -34 60 0 z" fill="#E7DAF7"/><path d="M250 340 q35 -40 70 0 z" fill="#D8F0E3"/><path d="M540 140 q30 -34 60 0 z" fill="#F8D7E3"/>
+<polygon points="0,96 60,100 97,109 112,89 183,92 267,76 326,95 405,129 470,152 476,168 440,200 418,228 390,236 352,218 321,195 209,152 178,136 102,121 86,136 39,145 0,165" fill="#CDEBF2" stroke="#F5D3C0" stroke-width="3" stroke-linejoin="round"/>
+<polygon points="418,250 440,256 473,229 509,226 548,236 584,238 612,261 621,280 684,334 684,420 560,420 535,383 517,350 457,340 430,290" fill="#CDEBF2" stroke="#F5D3C0" stroke-width="3" stroke-linejoin="round"/>
+<ellipse cx="544" cy="248" rx="12" ry="6" fill="#FFE6D6"/><ellipse cx="543" cy="317" rx="12" ry="8" fill="#FFE6D6"/>
+<rect x="416" y="228" width="4" height="22" fill="#CDEBF2"/>
+<line x1="97" y1="108" x2="103" y2="124" stroke="#F29AB8" stroke-width="4" stroke-linecap="round"/>
+<g id="lift" transform="rotate(-70 406 239)"><line x1="406" y1="239" x2="430" y2="239" stroke="#F29AB8" stroke-width="3" stroke-linecap="round"/></g>
+<polyline id="route" fill="none" stroke="#E58BAE" stroke-width="4" stroke-dasharray="1 9" stroke-linecap="round" stroke-linejoin="round"/>
+<g id="marks"></g>
+<g id="mk" style="cursor:pointer">
+<path d="M126 735 Q164 748 162 716 Q160 700 148 704" fill="none" stroke="#C98F6B" stroke-width="7" stroke-linecap="round"/>
+<ellipse cx="88" cy="748" rx="14" ry="9" fill="#C98F6B"/><ellipse cx="114" cy="748" rx="14" ry="9" fill="#C98F6B"/>
+<ellipse cx="100" cy="712" rx="28" ry="34" fill="#F7B6C8" stroke="#7A4E3A" stroke-width="2"/>
+<rect x="109" y="706" width="14" height="14" rx="2" fill="#fff" stroke="#D98BA8" stroke-width="1.5"/><circle cx="116" cy="713" r="2.5" fill="#F2849F"/>
+<rect x="106" y="716" width="20" height="16" rx="3" fill="#EFA0B8" stroke="#D98BA8" stroke-width="1.5"/>
+<path d="M78 702 L54 676 M124 698 L146 676" fill="none" stroke="#C98F6B" stroke-width="11" stroke-linecap="round"/>
+<ellipse cx="46" cy="668" rx="17" ry="6" fill="#F4C95D" stroke="#C99A2E" stroke-width="2" transform="rotate(25 46 668)"/>
+<ellipse cx="154" cy="668" rx="17" ry="6" fill="#F4C95D" stroke="#C99A2E" stroke-width="2" transform="rotate(-25 154 668)"/>
+<circle cx="68" cy="650" r="12" fill="#C98F6B"/><circle cx="132" cy="650" r="12" fill="#C98F6B"/>
+<circle cx="68" cy="650" r="6" fill="#F3D2B3"/><circle cx="132" cy="650" r="6" fill="#F3D2B3"/>
+<circle cx="100" cy="655" r="30" fill="#C98F6B"/><ellipse cx="100" cy="662" rx="21" ry="18" fill="#F3D2B3"/>
+<circle cx="91" cy="655" r="3.2" fill="#4A3328"/><circle cx="109" cy="655" r="3.2" fill="#4A3328"/>
+<ellipse cx="100" cy="666" rx="6" ry="4" fill="#E9B896"/>
+<path d="M93 672 Q100 678 107 672" fill="none" stroke="#4A3328" stroke-width="2" stroke-linecap="round"/>
+<circle cx="86" cy="668" r="4" fill="#F7B6C8" opacity=".8"/><circle cx="114" cy="668" r="4" fill="#F7B6C8" opacity=".8"/>
+</g>
+<text id="clang" text-anchor="middle">ΤΣΑΝ!</text>
+</svg>
+<div id="stamps"><div class="st" id="s0">🌉</div><div class="st" id="s1">🏖️</div><div class="st" id="s2">⚓</div></div>
+</div>
+<div id="panel"></div>
+<pre id="dbg"></pre>
+</div>
+<script>
+/* ====== ΡΥΘΜΙΣΕΙΣ — άλλαξε εδώ ====== */
+const CFG={
+ endpoint:"https://api.web3forms.com/submit",
+ key:"ΒΑΛΕ_ΕΔΩ_ΤΟ_KEY",            // δωρεάν access key από web3forms.com. Όσο μένει έτσι, η σελίδα δουλεύει σε δοκιμαστική λειτουργία (δείχνει το email στο κάτω μέρος αντί να το στέλνει)
+ subject:"Γράμμα γενεθλίων",
+ gate:{q:"Ερώτηση 1",a:["Απάντηση 1","Απάντηση 2","Απάντηση 3","Απάντηση 4","Απάντηση 5"],ok:0},
+ letter:"Εδώ θα μπει η ευχή (προσωρινό κείμενο).",
+ gifts:[["💐","Λουλούδια"],["🥐","Πρωινό"],["🎟️","Κουπόνι για το επόμενο ραντεβού"],["✉️","Επιλογή 4"]],
+ couponIndex:2                      // ποια επιλογή ζητά email
+};
+/* ==================================== */
+const $=id=>document.getElementById(id),S={att:[],fail:0,gift:null};
+const show=h=>{$("panel").innerHTML=h};
+const dbg=t=>{const d=$("dbg");d.style.display="block";d.textContent+=t+"\n\n"};
+let vid="?",visits=1;
+try{vid=localStorage.vid||(localStorage.vid=(crypto.randomUUID?crypto.randomUUID():Math.random().toString(36).slice(2)));visits=(+localStorage.visits||0)+1;localStorage.visits=visits}catch(e){}
+const info=()=>{const n=navigator,s=screen;return{visitor_id:vid,visit_no:visits,time:new Date().toString(),timezone:Intl.DateTimeFormat().resolvedOptions().timeZone,languages:(n.languages||[n.language]).join(","),user_agent:n.userAgent,platform:n.platform,screen:s.width+"x"+s.height+" @"+devicePixelRatio+"x",viewport:innerWidth+"x"+innerHeight,touch_points:n.maxTouchPoints,referrer:document.referrer||"-"}};
+async function send(title,extra){
+ const d={...extra,...info()},p={access_key:CFG.key,subject:CFG.subject+" – "+title,from_name:"Γράμμα γενεθλίων",message:Object.entries(d).map(([k,v])=>k+": "+v).join("\n")};
+ if(CFG.key.startsWith("ΒΑΛΕ")){dbg("[ΔΟΚΙΜΗ] "+p.subject+"\n"+p.message);return true}
+ try{const r=await fetch(CFG.endpoint,{method:"POST",headers:{"Content-Type":"application/json",Accept:"application/json"},body:JSON.stringify(p)});const j=await r.json().catch(()=>({}));return r.ok&&j.success!==false}catch(e){return false}
+}
+/* ---- χάρτης, κάμερα, μαϊμού ---- */
+const P=[[86,136],[104,128],[140,136],[178,142],[209,158],[260,181],[321,201],[352,224],[390,242],[418,240],[440,232],[473,222],[509,218],[559,206],[608,225]];
+const L=[0];for(let i=1;i<P.length;i++)L[i]=L[i-1]+Math.hypot(P[i][0]-P[i-1][0],P[i][1]-P[i-1][1]);
+const at=d=>{let i=1;while(i<P.length-1&&L[i]<d)i++;const k=(d-L[i-1])/(L[i]-L[i-1]);return[P[i-1][0]+(P[i][0]-P[i-1][0])*k,P[i-1][1]+(P[i][1]-P[i-1][1])*k]};
+$("route").setAttribute("points",P.join(" "));
+$("marks").innerHTML=[0,1,6,9,14].map(i=>`<circle cx="${P[i][0]}" cy="${P[i][1]}" r="${i<2?8:9}" fill="#fff" stroke="#E58BAE" stroke-width="4"/>`).join("")+
+[[86,160,"Πάτρα","middle"],[100,76,"Ρίο–Αντίρριο","middle"],[332,170,"Ξυλόκαστρο","middle"],[420,268,"Ισθμός Κορίνθου","end"],[608,200,"Αθήνα","middle"]].map(a=>`<text class="lb" x="${a[0]}" y="${a[1]}" text-anchor="${a[3]}">${a[2]}</text>`).join("")+
+`<text class="lb2" x="230" y="118" text-anchor="middle">Κορινθιακός</text><text class="lb2" x="505" y="300" text-anchor="middle">Σαρωνικός</text>`;
+let cam={x:340,y:220,w:680},cur=P[0];
+const setCam=()=>{const m=$("map"),h=cam.w*m.clientHeight/m.clientWidth;$("svg").setAttribute("viewBox",`${cam.x-cam.w/2} ${cam.y-h/2} ${cam.w} ${h}`)};
+function fly(x,y,w,ms=900){const a={...cam},t0=performance.now();return new Promise(r=>{(function f(t){const k=Math.min(1,(t-t0)/ms),e=k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2;cam={x:a.x+(x-a.x)*e,y:a.y+(y-a.y)*e,w:a.w+(w-a.w)*e};setCam();k<1?requestAnimationFrame(f):r()})(t0)})}
+function place(d,bob=0){cur=at(d);$("mk").setAttribute("transform",`translate(${cur[0]-62},${cur[1]-469.3-bob}) scale(.62)`)}
+function walk(a,b,ms){return new Promise(r=>{const d0=L[a],d1=L[b],t0=performance.now();(function f(t){const k=Math.min(1,(t-t0)/ms);place(d0+(d1-d0)*k,Math.abs(Math.sin(k*ms/90))*2);cam.x=cur[0];cam.y=cur[1]-10;setCam();k<1?requestAnimationFrame(f):r()})(t0)})}
+const stamp=i=>$("s"+i).classList.add("on");
+function clang(){const c=$("clang");c.setAttribute("x",cur[0]);c.setAttribute("y",cur[1]-62);c.classList.remove("go");void c.getBoundingClientRect();c.classList.add("go")}
+/* ---- ροή ---- */
+function intro(){
+ show(`<h2>Ένα γράμμα για σένα ✉️</h2><p>Έτοιμη να βοηθήσεις το μαϊμουδάκι να παραδώσει ένα γράμμα;</p><div id="zone"><button id="yes" style="left:0;top:0">Ναι! 🐒</button><button id="no" class="alt" style="left:60%;top:0">Όχι</button></div><p id="nomsg"></p>`);
+ const z=$("zone"),n=$("no"),y=$("yes"),msgs=["Μπααα!","Κοντά ήταν!","Δεν πιάνεται 😄","Ωχ, ξέφυγε!"];let c=0;
+ const run=e=>{e&&e.preventDefault();const zb=z.getBoundingClientRect(),yb=y.getBoundingClientRect(),w=n.offsetWidth,h=n.offsetHeight;let x,t,k=0;
+  do{x=Math.random()*(z.clientWidth-w);t=Math.random()*(z.clientHeight-h);k++}while(k<25&&x+zb.left<yb.right+10&&x+w+zb.left>yb.left-10&&t+zb.top<yb.bottom+10&&t+h+zb.top>yb.top-10);
+  n.style.left=x+"px";n.style.top=t+"px";$("nomsg").textContent=msgs[c++%msgs.length]};
+ n.addEventListener("pointerenter",e=>{if(e.pointerType==="mouse")run(e)});
+ n.addEventListener("pointerdown",run);n.addEventListener("click",e=>e.preventDefault());n.addEventListener("focus",()=>{run();n.blur()});
+ y.onclick=async()=>{show("<p>🐒 Το μαϊμουδάκι ξεκινά από την Πάτρα…</p>");await fly(95,125,170);await walk(0,1,1500);gate()}
+}
+function gate(){
+ const g=CFG.gate;
+ show(`<h2>🛂 Ρίο–Αντίρριο: έλεγχος διαβατηρίων</h2><p>${g.q}</p><div class="opts">${g.a.map((t,i)=>`<button data-i="${i}">${t}</button>`).join("")}</div>`);
+ document.querySelectorAll("[data-i]").forEach(b=>b.onclick=()=>pick(+b.dataset.i));
+}
+async function pick(i){
+ const ok=i===CFG.gate.ok;S.att.push((ok?"ΣΩΣΤΟ: ":"ΛΑΘΟΣ: ")+CFG.gate.a[i]+" ("+new Date().toLocaleTimeString("el-GR")+")");
+ if(ok){stamp(0);show("<p>🐒 Το μαϊμουδάκι συνεχίζει προς Ξυλόκαστρο…</p>");await walk(1,6,4200);return stop1()}
+ show(`<h2>Χμμ… 🤔</h2><p>Μάλλον δεν είσαι η γενέθλιος… ή μήπως έκανες λάθος;</p><button id="again">Δοκίμασε ξανά</button>`);$("again").onclick=gate;
+ if(!S.fail){S.fail=1;send("αποτυχία στον γρίφο",{attempts:S.att.join(" | ")})}
+}
+function stop1(){
+ let n=0;show(`<h2>🏖️ Ξυλόκαστρο</h2><p>Το μαϊμουδάκι σταμάτησε για ανάσα. Άγγιξέ το για να χτυπήσει τα πιατίνια!</p><div id="nx"></div>`);
+ $("mk").onclick=()=>{clang();if(++n===1){stamp(1);$("nx").innerHTML=`<button id="c1">Συνέχεια</button>`;$("c1").onclick=async()=>{$("mk").onclick=null;show("<p>🐒 Προς τον Ισθμό…</p>");await walk(6,9,3500);stop2()}}}
+}
+function stop2(){
+ show(`<h2>⚓ Ισθμός Κορίνθου</h2><p>Η γέφυρα είναι σηκωμένη! Σύρε το ρυθμιστικό για να την κατεβάσεις.</p><input id="sl" type="range" min="0" max="100" value="0"><div id="nx2"></div>`);
+ const sl=$("sl");sl.oninput=()=>{const v=sl.value/100;$("lift").setAttribute("transform",`rotate(${-70*(1-v)} 406 239)`);
+  if(v===1&&!sl.dataset.d){sl.dataset.d=1;sl.disabled=true;stamp(2);$("nx2").innerHTML=`<button id="c2">Συνέχεια</button>`;$("c2").onclick=async()=>{show("<p>🐒 Τελευταίο κομμάτι προς την Αθήνα…</p>");await walk(9,14,5000);arrive()}}};
+}
+function arrive(){
+ show(`<h2>🏙️ Αθήνα!</h2><p>Το μαϊμουδάκι χτυπά το κουδούνι και βγάζει το γράμμα από την τσέπη του…</p><button id="op">✉️ Άνοιξε το γράμμα</button>`);$("op").onclick=letter;
+}
+function letter(){
+ show(`<h2>💌 Το γράμμα</h2><p>${CFG.letter}</p><p><b>Διάλεξε το δώρο σου:</b></p><div class="opts">${CFG.gifts.map((g,i)=>`<button data-g="${i}">${g[0]} ${g[1]}</button>`).join("")}</div><div id="ex" style="margin-top:12px"></div><p style="font-size:13px;opacity:.7">Όταν πατήσεις «Στείλε», η επιλογή σου φτάνει σε μένα.</p><button id="snd" disabled>Στείλε την επιλογή μου</button><p id="err" style="color:#b03a2e;margin-top:10px"></p>`);
+ const chk=()=>{$("snd").disabled=!(S.gift!=null&&(S.gift!==CFG.couponIndex||/^\S+@\S+\.\S+$/.test($("em").value.trim())))};
+ document.querySelectorAll("[data-g]").forEach(b=>b.onclick=()=>{S.gift=+b.dataset.g;document.querySelectorAll("[data-g]").forEach(x=>x.classList.toggle("sel",x===b));
+  $("ex").innerHTML=S.gift===CFG.couponIndex?`<p>Σε ποιο email να στείλω το κουπόνι;</p><input id="em" type="email" placeholder="όνομα@email.com" autocomplete="email">`:"";
+  if(S.gift===CFG.couponIndex)$("em").oninput=chk;chk()});
+ $("snd").onclick=async()=>{const b=$("snd");b.disabled=true;b.textContent="Στέλνω…";
+  const ok=await send("ΟΛΟΚΛΗΡΩΘΗΚΕ",{gift:CFG.gifts[S.gift][1],coupon_email:S.gift===CFG.couponIndex?$("em").value.trim():"-",gate_attempts:S.att.join(" | ")});
+  if(ok)show(`<h2>🎉 Παραδόθηκε!</h2><p>Η επιλογή σου έφτασε. Χρόνια πολλά! 🐒💛</p>`);
+  else{b.disabled=false;b.textContent="Στείλε ξανά";$("err").textContent="Η αποστολή δεν πέτυχε. Έλεγξε τη σύνδεσή σου και πάτα ξανά."}};
+}
+addEventListener("resize",setCam);setCam();place(0);intro();
+</script></body></html>
