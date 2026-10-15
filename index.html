@@ -6,23 +6,19 @@
 :root{--cream:#FFF3E8;--pink:#E58BAE;--ink:#6B4A66;--soft:#F8D7E3}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;background:var(--cream);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
-#app{max-width:480px;margin:0 auto;min-height:100dvh;display:flex;flex-direction:column;padding-top:env(safe-area-inset-top)}
-#map{position:relative;height:min(58dvh,125vw);background:#FFE6D6;overflow:hidden}
+#app{max-width:480px;margin:0 auto;height:100dvh;display:flex;flex-direction:column;padding-top:env(safe-area-inset-top)}
+#map{position:relative;flex:1;min-height:0;background:var(--cream);overflow:hidden}
 #map svg{width:100%;height:100%;display:block}
-#stamps{position:absolute;top:8px;right:8px;display:flex;gap:6px}
-.st{width:34px;height:34px;border-radius:8px;border:2px dashed var(--pink);background:#fff8;display:grid;place-items:center;font-size:16px;opacity:.55}
-.st.on{border-style:solid;background:#fff;opacity:1;transform:rotate(-6deg)}
-#panel{flex:1;background:#fff;border-radius:22px 22px 0 0;margin-top:-18px;position:relative;padding:20px 18px calc(24px + env(safe-area-inset-bottom));box-shadow:0 -6px 20px #e58bae22}
-h2{margin:0 0 8px;font-size:20px}p{margin:0 0 14px;line-height:1.45}
-button{font:inherit;font-weight:600;border:0;border-radius:999px;padding:13px 22px;min-height:48px;background:var(--pink);color:#fff;cursor:pointer}
+#panel{flex:none;max-height:44dvh;overflow:auto;background:#fff;border-radius:22px 22px 0 0;margin-top:-18px;position:relative;z-index:1;padding:14px 16px calc(14px + env(safe-area-inset-bottom));box-shadow:0 -6px 20px #e58bae22}
+h2{margin:0 0 6px;font-size:18px}p{margin:0 0 10px;line-height:1.4;font-size:15px}
+button{font:inherit;font-weight:600;border:0;border-radius:999px;padding:10px 20px;min-height:44px;background:var(--pink);color:#fff;cursor:pointer}
 button:disabled{opacity:.45}
 button.alt{background:var(--soft);color:var(--ink)}
-.opts{display:grid;gap:10px}.opts button{background:var(--soft);color:var(--ink);text-align:left;border-radius:16px}
+.opts{display:grid;gap:8px}.opts.g{grid-template-columns:1fr 1fr}.opts button{background:var(--soft);color:var(--ink);text-align:left;border-radius:16px;padding:9px 12px;font-size:14px}
 .opts button.sel{background:var(--pink);color:#fff}
 input[type=email]{width:100%;font:inherit;padding:12px 14px;border:2px solid var(--soft);border-radius:14px;margin:0 0 10px}
 input[type=range]{width:100%;accent-color:var(--pink);height:40px}
-#zone{position:relative;height:110px}#zone button{position:absolute}
-#nomsg{min-height:1.4em;text-align:center}
+#zone{position:relative;height:84px}#zone button{position:absolute}
 #dbg{display:none;white-space:pre-wrap;font:11px monospace;background:#f6f0f8;padding:8px;margin:0}
 .lb{font-size:18px;font-weight:500;fill:#6B4A66;paint-order:stroke;stroke:#fff;stroke-width:4px;stroke-linejoin:round}
 .lb2{font-size:13px;font-style:italic;fill:#6FAEC0}
@@ -31,11 +27,16 @@ input[type=range]{width:100%;accent-color:var(--pink);height:40px}
 </style></head><body>
 <div id="app">
 <div id="map"><svg id="svg" xmlns="http://www.w3.org/2000/svg">
-<rect x="-400" y="-400" width="1500" height="1300" fill="#FFE6D6"/>
+<defs><clipPath id="sh"><rect width="680" height="440" rx="14"/></clipPath></defs><text x="340" y="-72" text-anchor="middle" style="font-size:34px;font-weight:700;fill:#6B4A66">Το ταξίδι του μαϊμουδάκι</text><text x="340" y="-36" text-anchor="middle" style="font-size:18px;fill:#9B7A96">Από την Πάτρα στην Αθήνα, με ένα γράμμα</text><g clip-path="url(#sh)"><rect width="680" height="440" fill="#FFE6D6"/>
 <path d="M300 60 q30 -34 60 0 z" fill="#D8F0E3"/><path d="M450 70 q35 -40 70 0 z" fill="#F8D7E3"/><path d="M190 300 q30 -34 60 0 z" fill="#E7DAF7"/><path d="M250 340 q35 -40 70 0 z" fill="#D8F0E3"/><path d="M540 140 q30 -34 60 0 z" fill="#F8D7E3"/>
-<polygon points="0,96 60,100 97,109 112,89 183,92 267,76 326,95 405,129 470,152 476,168 440,200 418,228 390,236 352,218 321,195 209,152 178,136 102,121 86,136 39,145 0,165" fill="#CDEBF2" stroke="#F5D3C0" stroke-width="3" stroke-linejoin="round"/>
-<polygon points="418,250 440,256 473,229 509,226 548,236 584,238 612,261 621,280 684,334 684,420 560,420 535,383 517,350 457,340 430,290" fill="#CDEBF2" stroke="#F5D3C0" stroke-width="3" stroke-linejoin="round"/>
+<polygon points="0,96 30,92 60,100 80,104 97,109 112,89 140,95 183,92 215,86 240,80 267,76 300,84 326,95 360,104 405,129 430,138 470,152 476,168 462,182 448,196 440,200 430,214 418,228 400,234 390,236 372,228 352,218 336,206 321,195 300,184 270,172 240,162 209,152 193,143 178,136 150,129 124,124 102,121 86,136 70,141 39,145 18,155 0,165" fill="#CDEBF2" stroke="#F5D3C0" stroke-width="3" stroke-linejoin="round"/>
+<polygon points="418,250 440,256 455,243 473,229 490,228 505,232 509,226 522,224 535,228 548,236 566,236 584,238 596,246 612,261 618,272 621,280 640,296 660,318 684,334 684,420 560,420 548,400 535,383 528,372 517,350 500,346 480,336 457,340 442,318 430,290" fill="#CDEBF2" stroke="#F5D3C0" stroke-width="3" stroke-linejoin="round"/>
 <ellipse cx="544" cy="248" rx="12" ry="6" fill="#FFE6D6"/><ellipse cx="543" cy="317" rx="12" ry="8" fill="#FFE6D6"/>
+<polygon points="540,0 575,0 592,30 612,62 640,90 660,118 684,128 684,150 655,150 630,122 605,96 580,60 560,28" fill="#CDEBF2" stroke="#F5D3C0" stroke-width="3" stroke-linejoin="round"/>
+<ellipse cx="296" cy="226" rx="14" ry="4" fill="#FFE9B8"/><line x1="296" y1="214" x2="296" y2="226" stroke="#B88A6A" stroke-width="2"/><path d="M284 214 Q296 200 308 214 Z" fill="#FFB6C9"/>
+<polygon points="626,216 640,207 654,216" fill="#E7DAF7" stroke="#B79BDB"/><path d="M630 216v10M640 216v10M650 216v10" stroke="#B79BDB" stroke-width="3"/><rect x="624" y="226" width="32" height="4" fill="#E7DAF7" stroke="#B79BDB"/>
+<path d="M130 175l5-12 5 12zM148 182l5-12 5 12zM330 285l5-12 5 12zM200 235l5-12 5 12zM530 190l5-12 5 12z" fill="#BFE6D5"/>
+<rect x="412" y="228" width="4" height="22" fill="#F5D3C0"/><rect x="420" y="228" width="4" height="22" fill="#F5D3C0"/>
 <rect x="416" y="228" width="4" height="22" fill="#CDEBF2"/>
 <line x1="97" y1="108" x2="103" y2="124" stroke="#F29AB8" stroke-width="4" stroke-linecap="round"/>
 <g id="lift" transform="rotate(-70 406 239)"><line x1="406" y1="239" x2="430" y2="239" stroke="#F29AB8" stroke-width="3" stroke-linecap="round"/></g>
@@ -45,11 +46,9 @@ input[type=range]{width:100%;accent-color:var(--pink);height:40px}
 <path d="M126 735 Q164 748 162 716 Q160 700 148 704" fill="none" stroke="#C98F6B" stroke-width="7" stroke-linecap="round"/>
 <ellipse cx="88" cy="748" rx="14" ry="9" fill="#C98F6B"/><ellipse cx="114" cy="748" rx="14" ry="9" fill="#C98F6B"/>
 <ellipse cx="100" cy="712" rx="28" ry="34" fill="#F7B6C8" stroke="#7A4E3A" stroke-width="2"/>
-<rect x="109" y="706" width="14" height="14" rx="2" fill="#fff" stroke="#D98BA8" stroke-width="1.5"/><circle cx="116" cy="713" r="2.5" fill="#F2849F"/>
-<rect x="106" y="716" width="20" height="16" rx="3" fill="#EFA0B8" stroke="#D98BA8" stroke-width="1.5"/>
-<path d="M78 702 L54 676 M124 698 L146 676" fill="none" stroke="#C98F6B" stroke-width="11" stroke-linecap="round"/>
-<ellipse cx="46" cy="668" rx="17" ry="6" fill="#F4C95D" stroke="#C99A2E" stroke-width="2" transform="rotate(25 46 668)"/>
-<ellipse cx="154" cy="668" rx="17" ry="6" fill="#F4C95D" stroke="#C99A2E" stroke-width="2" transform="rotate(-25 154 668)"/>
+<g transform="rotate(-12 116 712)"><rect x="102" y="699" width="28" height="19" rx="2" fill="#fff" stroke="#D98BA8" stroke-width="1.5"/><path d="M102 699 L116 710 L130 699" fill="none" stroke="#D98BA8" stroke-width="1.5"/><path d="M116 716 l-3.5 -3.5 a2.2 2.2 0 0 1 3.5 -2.6 a2.2 2.2 0 0 1 3.5 2.6 z" fill="#F2849F"/></g>
+<rect x="106" y="717" width="22" height="15" rx="3" fill="#EFA0B8" stroke="#D98BA8" stroke-width="1.5"/><path d="M109 721h16" stroke="#D98BA8" stroke-dasharray="2 2"/>
+<line id="al" x1="78" y1="702" x2="54" y2="676" stroke="#C98F6B" stroke-width="11" stroke-linecap="round"/><line id="ar" x1="124" y1="698" x2="146" y2="676" stroke="#C98F6B" stroke-width="11" stroke-linecap="round"/>
 <circle cx="68" cy="650" r="12" fill="#C98F6B"/><circle cx="132" cy="650" r="12" fill="#C98F6B"/>
 <circle cx="68" cy="650" r="6" fill="#F3D2B3"/><circle cx="132" cy="650" r="6" fill="#F3D2B3"/>
 <circle cx="100" cy="655" r="30" fill="#C98F6B"/><ellipse cx="100" cy="662" rx="21" ry="18" fill="#F3D2B3"/>
@@ -57,19 +56,21 @@ input[type=range]{width:100%;accent-color:var(--pink);height:40px}
 <ellipse cx="100" cy="666" rx="6" ry="4" fill="#E9B896"/>
 <path d="M93 672 Q100 678 107 672" fill="none" stroke="#4A3328" stroke-width="2" stroke-linecap="round"/>
 <circle cx="86" cy="668" r="4" fill="#F7B6C8" opacity=".8"/><circle cx="114" cy="668" r="4" fill="#F7B6C8" opacity=".8"/>
+<g id="cl" transform="translate(54,676)"><circle r="15" fill="#F4C95D" stroke="#B8892B" stroke-width="2"/><circle r="10" fill="none" stroke="#E0A93A" stroke-width="1.5"/><circle r="4" fill="#D9A93C" stroke="#B8892B" stroke-width="1.5"/><path d="M-10 -6 A11 11 0 0 1 -3 -11" fill="none" stroke="#FFF3B8" stroke-width="2" stroke-linecap="round"/></g>
+<g id="cr" transform="translate(146,676)"><circle r="15" fill="#F4C95D" stroke="#B8892B" stroke-width="2"/><circle r="10" fill="none" stroke="#E0A93A" stroke-width="1.5"/><circle r="4" fill="#D9A93C" stroke="#B8892B" stroke-width="1.5"/><path d="M-10 -6 A11 11 0 0 1 -3 -11" fill="none" stroke="#FFF3B8" stroke-width="2" stroke-linecap="round"/></g>
 </g>
 <text id="clang" text-anchor="middle">ΤΣΑΝ!</text>
-</svg>
-<div id="stamps"><div class="st" id="s0">🌉</div><div class="st" id="s1">🏖️</div><div class="st" id="s2">⚓</div></div>
+</g><rect width="680" height="440" rx="14" fill="none" stroke="#F2B8CC" stroke-width="3"/></svg>
 </div>
 <div id="panel"></div>
 <pre id="dbg"></pre>
 </div>
+<script src="config.js"></script>
 <script>
 /* ====== ΡΥΘΜΙΣΕΙΣ — άλλαξε εδώ ====== */
 const CFG={
  endpoint:"https://api.web3forms.com/submit",
- key:"18443fd3-cdee-42a9-9a4c-922425fe18bd",         
+ key:window.WEB3FORMS_KEY||"ΒΑΛΕ_ΕΔΩ_ΤΟ_KEY",   // το κλειδί μπαίνει στο αρχείο config.js
  subject:"Γράμμα γενεθλίων",
  gate:{q:"Ερώτηση 1",a:["Απάντηση 1","Απάντηση 2","Απάντηση 3","Απάντηση 4","Απάντηση 5"],ok:0},
  letter:"Εδώ θα μπει η ευχή (προσωρινό κείμενο).",
@@ -97,19 +98,22 @@ $("marks").innerHTML=[0,1,6,9,14].map(i=>`<circle cx="${P[i][0]}" cy="${P[i][1]}
 [[86,160,"Πάτρα","middle"],[100,76,"Ρίο–Αντίρριο","middle"],[332,170,"Ξυλόκαστρο","middle"],[420,268,"Ισθμός Κορίνθου","end"],[608,200,"Αθήνα","middle"]].map(a=>`<text class="lb" x="${a[0]}" y="${a[1]}" text-anchor="${a[3]}">${a[2]}</text>`).join("")+
 `<text class="lb2" x="230" y="118" text-anchor="middle">Κορινθιακός</text><text class="lb2" x="505" y="300" text-anchor="middle">Σαρωνικός</text>`;
 let cam={x:340,y:220,w:680},cur=P[0];
-const setCam=()=>{const m=$("map"),h=cam.w*m.clientHeight/m.clientWidth;$("svg").setAttribute("viewBox",`${cam.x-cam.w/2} ${cam.y-h/2} ${cam.w} ${h}`)};
+const cl=(v,a,b)=>Math.min(Math.max(v,Math.min(a,b)),Math.max(a,b));
+const setCam=()=>{const m=$("map"),h=cam.w*m.clientHeight/m.clientWidth,x=cl(cam.x,cam.w/2,680-cam.w/2),y=cl(cam.y,h/2,440-h/2);$("svg").setAttribute("viewBox",`${x-cam.w/2} ${y-h/2} ${cam.w} ${h}`)};
 function fly(x,y,w,ms=900){const a={...cam},t0=performance.now();return new Promise(r=>{(function f(t){const k=Math.min(1,(t-t0)/ms),e=k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2;cam={x:a.x+(x-a.x)*e,y:a.y+(y-a.y)*e,w:a.w+(w-a.w)*e};setCam();k<1?requestAnimationFrame(f):r()})(t0)})}
-function place(d,bob=0){cur=at(d);$("mk").setAttribute("transform",`translate(${cur[0]-62},${cur[1]-469.3-bob}) scale(.62)`)}
+function place(d,bob=0){cur=at(d);$("mk").setAttribute("transform",`translate(${cur[0]-56},${cur[1]-423.9-bob}) scale(.56)`)}
 function walk(a,b,ms){return new Promise(r=>{const d0=L[a],d1=L[b],t0=performance.now();(function f(t){const k=Math.min(1,(t-t0)/ms);place(d0+(d1-d0)*k,Math.abs(Math.sin(k*ms/90))*2);cam.x=cur[0];cam.y=cur[1]-10;setCam();k<1?requestAnimationFrame(f):r()})(t0)})}
-const stamp=i=>$("s"+i).classList.add("on");
-function clang(){const c=$("clang");c.setAttribute("x",cur[0]);c.setAttribute("y",cur[1]-62);c.classList.remove("go");void c.getBoundingClientRect();c.classList.add("go")}
+function clap(){const t0=performance.now();(function f(t){const k=Math.min(1,(t-t0)/600),e=Math.abs(Math.sin(k*Math.PI*2));
+ [["l",54,676,90,688],["r",146,676,110,688]].forEach(([s,a,b,c,d])=>{const x=a+(c-a)*e,y=b+(d-b)*e;$("c"+s).setAttribute("transform",`translate(${x},${y})`);const l=$("a"+s);l.setAttribute("x2",x);l.setAttribute("y2",y)});
+ if(k<1)requestAnimationFrame(f)})(t0)}
+function clang(){clap();const c=$("clang");c.setAttribute("x",cur[0]);c.setAttribute("y",cur[1]-62);c.classList.remove("go");void c.getBoundingClientRect();c.classList.add("go")}
 /* ---- ροή ---- */
 function intro(){
- show(`<h2>Ένα γράμμα για σένα ✉️</h2><p>Έτοιμη να βοηθήσεις το μαϊμουδάκι να παραδώσει ένα γράμμα;</p><div id="zone"><button id="yes" style="left:0;top:0">Ναι! 🐒</button><button id="no" class="alt" style="left:60%;top:0">Όχι</button></div><p id="nomsg"></p>`);
- const z=$("zone"),n=$("no"),y=$("yes"),msgs=["Μπααα!","Κοντά ήταν!","Δεν πιάνεται 😄","Ωχ, ξέφυγε!"];let c=0;
+ show(`<h2>Ένα γράμμα για σένα ✉️</h2><p>Έτοιμη να βοηθήσεις το μαϊμουδάκι να παραδώσει ένα γράμμα;</p><div id="zone"><button id="yes" style="left:0;top:0">Ναι! 🐒</button><button id="no" class="alt" style="left:60%;top:0">Όχι</button></div>`);
+ const z=$("zone"),n=$("no"),y=$("yes");
  const run=e=>{e&&e.preventDefault();const zb=z.getBoundingClientRect(),yb=y.getBoundingClientRect(),w=n.offsetWidth,h=n.offsetHeight;let x,t,k=0;
   do{x=Math.random()*(z.clientWidth-w);t=Math.random()*(z.clientHeight-h);k++}while(k<25&&x+zb.left<yb.right+10&&x+w+zb.left>yb.left-10&&t+zb.top<yb.bottom+10&&t+h+zb.top>yb.top-10);
-  n.style.left=x+"px";n.style.top=t+"px";$("nomsg").textContent=msgs[c++%msgs.length]};
+  n.style.left=x+"px";n.style.top=t+"px"};
  n.addEventListener("pointerenter",e=>{if(e.pointerType==="mouse")run(e)});
  n.addEventListener("pointerdown",run);n.addEventListener("click",e=>e.preventDefault());n.addEventListener("focus",()=>{run();n.blur()});
  y.onclick=async()=>{show("<p>🐒 Το μαϊμουδάκι ξεκινά από την Πάτρα…</p>");await fly(95,125,170);await walk(0,1,1500);gate()}
@@ -121,24 +125,24 @@ function gate(){
 }
 async function pick(i){
  const ok=i===CFG.gate.ok;S.att.push((ok?"ΣΩΣΤΟ: ":"ΛΑΘΟΣ: ")+CFG.gate.a[i]+" ("+new Date().toLocaleTimeString("el-GR")+")");
- if(ok){stamp(0);show("<p>🐒 Το μαϊμουδάκι συνεχίζει προς Ξυλόκαστρο…</p>");await walk(1,6,4200);return stop1()}
+ if(ok){show("<p>🐒 Το μαϊμουδάκι συνεχίζει προς Ξυλόκαστρο…</p>");await walk(1,6,4200);return stop1()}
  show(`<h2>Χμμ… 🤔</h2><p>Μάλλον δεν είσαι η γενέθλιος… ή μήπως έκανες λάθος;</p><button id="again">Δοκίμασε ξανά</button>`);$("again").onclick=gate;
  if(!S.fail){S.fail=1;send("αποτυχία στον γρίφο",{attempts:S.att.join(" | ")})}
 }
 function stop1(){
  let n=0;show(`<h2>🏖️ Ξυλόκαστρο</h2><p>Το μαϊμουδάκι σταμάτησε για ανάσα. Άγγιξέ το για να χτυπήσει τα πιατίνια!</p><div id="nx"></div>`);
- $("mk").onclick=()=>{clang();if(++n===1){stamp(1);$("nx").innerHTML=`<button id="c1">Συνέχεια</button>`;$("c1").onclick=async()=>{$("mk").onclick=null;show("<p>🐒 Προς τον Ισθμό…</p>");await walk(6,9,3500);stop2()}}}
+ $("mk").onclick=()=>{clang();if(++n===1){$("nx").innerHTML=`<button id="c1">Συνέχεια</button>`;$("c1").onclick=async()=>{$("mk").onclick=null;show("<p>🐒 Προς τον Ισθμό…</p>");await walk(6,9,3500);stop2()}}}
 }
 function stop2(){
  show(`<h2>⚓ Ισθμός Κορίνθου</h2><p>Η γέφυρα είναι σηκωμένη! Σύρε το ρυθμιστικό για να την κατεβάσεις.</p><input id="sl" type="range" min="0" max="100" value="0"><div id="nx2"></div>`);
  const sl=$("sl");sl.oninput=()=>{const v=sl.value/100;$("lift").setAttribute("transform",`rotate(${-70*(1-v)} 406 239)`);
-  if(v===1&&!sl.dataset.d){sl.dataset.d=1;sl.disabled=true;stamp(2);$("nx2").innerHTML=`<button id="c2">Συνέχεια</button>`;$("c2").onclick=async()=>{show("<p>🐒 Τελευταίο κομμάτι προς την Αθήνα…</p>");await walk(9,14,5000);arrive()}}};
+  if(v===1&&!sl.dataset.d){sl.dataset.d=1;sl.disabled=true;$("nx2").innerHTML=`<button id="c2">Συνέχεια</button>`;$("c2").onclick=async()=>{show("<p>🐒 Τελευταίο κομμάτι προς την Αθήνα…</p>");await walk(9,14,5000);arrive()}}};
 }
 function arrive(){
  show(`<h2>🏙️ Αθήνα!</h2><p>Το μαϊμουδάκι χτυπά το κουδούνι και βγάζει το γράμμα από την τσέπη του…</p><button id="op">✉️ Άνοιξε το γράμμα</button>`);$("op").onclick=letter;
 }
 function letter(){
- show(`<h2>💌 Το γράμμα</h2><p>${CFG.letter}</p><p><b>Διάλεξε το δώρο σου:</b></p><div class="opts">${CFG.gifts.map((g,i)=>`<button data-g="${i}">${g[0]} ${g[1]}</button>`).join("")}</div><div id="ex" style="margin-top:12px"></div><p style="font-size:13px;opacity:.7">Όταν πατήσεις «Στείλε», η επιλογή σου φτάνει σε μένα.</p><button id="snd" disabled>Στείλε την επιλογή μου</button><p id="err" style="color:#b03a2e;margin-top:10px"></p>`);
+ show(`<h2>💌 Το γράμμα</h2><p>${CFG.letter}</p><p><b>Διάλεξε το δώρο σου:</b></p><div class="opts g">${CFG.gifts.map((g,i)=>`<button data-g="${i}">${g[0]} ${g[1]}</button>`).join("")}</div><div id="ex" style="margin-top:12px"></div><p style="font-size:13px;opacity:.7">Όταν πατήσεις «Στείλε», η επιλογή σου φτάνει σε μένα.</p><button id="snd" disabled>Στείλε την επιλογή μου</button><p id="err" style="color:#b03a2e;margin-top:10px"></p>`);
  const chk=()=>{$("snd").disabled=!(S.gift!=null&&(S.gift!==CFG.couponIndex||/^\S+@\S+\.\S+$/.test($("em").value.trim())))};
  document.querySelectorAll("[data-g]").forEach(b=>b.onclick=()=>{S.gift=+b.dataset.g;document.querySelectorAll("[data-g]").forEach(x=>x.classList.toggle("sel",x===b));
   $("ex").innerHTML=S.gift===CFG.couponIndex?`<p>Σε ποιο email να στείλω το κουπόνι;</p><input id="em" type="email" placeholder="όνομα@email.com" autocomplete="email">`:"";
@@ -148,5 +152,5 @@ function letter(){
   if(ok)show(`<h2>🎉 Παραδόθηκε!</h2><p>Η επιλογή σου έφτασε. Χρόνια πολλά! 🐒💛</p>`);
   else{b.disabled=false;b.textContent="Στείλε ξανά";$("err").textContent="Η αποστολή δεν πέτυχε. Έλεγξε τη σύνδεσή σου και πάτα ξανά."}};
 }
-addEventListener("resize",setCam);setCam();place(0);intro();
+addEventListener("resize",setCam);if(window.ResizeObserver)new ResizeObserver(setCam).observe($("map"));setCam();place(0);intro();
 </script></body></html>
