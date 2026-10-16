@@ -24,6 +24,13 @@ input[type=range]{width:100%;accent-color:var(--pink);height:40px}
 .lb2{font-size:13px;font-style:italic;fill:#6FAEC0}
 @keyframes pop{0%{opacity:1;transform:translateY(0)}100%{opacity:0;transform:translateY(-26px)}}
 #clang{opacity:0;font-weight:800;font-size:18px;fill:#C99A2E}#clang.go{animation:pop .7s ease-out}
+@media (min-width:900px){
+body{min-height:100dvh;display:grid;place-items:center;background:radial-gradient(circle at 12% 18%,#F8D7E3 0,transparent 38%),radial-gradient(circle at 88% 84%,#E7DAF7 0,transparent 40%),radial-gradient(circle at 86% 12%,#D8F0E3 0,transparent 28%),var(--cream)}
+#app{width:100%;max-width:1120px;height:min(100dvh,780px);padding:32px;flex-direction:row;gap:26px;align-items:stretch}
+#map{min-width:0;border-radius:26px;border:6px solid #fff;box-shadow:0 14px 44px #b07a9a33}
+#panel{flex:none;width:380px;align-self:center;max-height:100%;margin:0;padding:26px 24px;border-radius:26px;box-shadow:0 14px 44px #b07a9a33}
+h2{font-size:24px}p{font-size:17px}button{font-size:17px}.opts button{font-size:16px}
+}
 </style></head><body>
 <div id="app">
 <div id="map"><svg id="svg" xmlns="http://www.w3.org/2000/svg">
@@ -74,7 +81,12 @@ const CFG={
  subject:"Γράμμα γενεθλίων",
  gate:{q:"Ερώτηση 1",a:["Απάντηση 1","Απάντηση 2","Απάντηση 3","Απάντηση 4","Απάντηση 5"],ok:0},
  letter:"Εδώ θα μπει η ευχή (προσωρινό κείμενο).",
- gifts:[["💐","Λουλούδια"],["🥐","Πρωινό"],["🎟️","Κουπόνι για το επόμενο ραντεβού"],["✉️","Επιλογή 4"]],
+ gifts:[   // [εικονίδιο, όνομα, [οι 4 επιλογές του επόμενου βήματος]]
+  ["💐","Λουλούδια",["Τριαντάφυλλα","Ανοιξιάτικο μπουκέτο","Τουλίπες","Αγριολούλουδα"]],
+  ["🥐","Πρωινό",["Γλυκό","Αλμυρό","Ελαφρύ και υγιεινό","Πλούσιο brunch"]],
+  ["🎟️","Κουπόνι για το επόμενο ραντεβού",["Σούσι","Καφές και βόλτα","Φαγητό της επιλογής σου","Έκπληξη"]],
+  ["✉️","Επιλογή 4",["Επιλογή 4α","Επιλογή 4β","Επιλογή 4γ","Επιλογή 4δ"]]
+ ],
  couponIndex:2                      // ποια επιλογή ζητά email
 };
 /* ==================================== */
@@ -97,16 +109,16 @@ $("route").setAttribute("points",P.join(" "));
 $("marks").innerHTML=[0,1,6,9,14].map(i=>`<circle cx="${P[i][0]}" cy="${P[i][1]}" r="${i<2?8:9}" fill="#fff" stroke="#E58BAE" stroke-width="4"/>`).join("")+
 [[86,160,"Πάτρα","middle"],[100,76,"Ρίο–Αντίρριο","middle"],[332,170,"Ξυλόκαστρο","middle"],[420,268,"Ισθμός Κορίνθου","end"],[608,200,"Αθήνα","middle"]].map(a=>`<text class="lb" x="${a[0]}" y="${a[1]}" text-anchor="${a[3]}">${a[2]}</text>`).join("")+
 `<text class="lb2" x="230" y="118" text-anchor="middle">Κορινθιακός</text><text class="lb2" x="505" y="300" text-anchor="middle">Σαρωνικός</text>`;
-let cam={x:340,y:220,w:680},cur=P[0];
+let ov=1,cam={x:340,y:220,w:680},cur=P[0];
 const cl=(v,a,b)=>Math.min(Math.max(v,Math.min(a,b)),Math.max(a,b));
-const setCam=()=>{const m=$("map"),h=cam.w*m.clientHeight/m.clientWidth,x=cl(cam.x,cam.w/2,680-cam.w/2),y=cl(cam.y,h/2,440-h/2);$("svg").setAttribute("viewBox",`${x-cam.w/2} ${y-h/2} ${cam.w} ${h}`)};
+const setCam=()=>{const m=$("map");if(ov)cam.w=Math.max(700,660*m.clientWidth/(m.clientHeight||1));const h=cam.w*m.clientHeight/m.clientWidth,x=cl(cam.x,cam.w/2,680-cam.w/2),y=cl(cam.y,h/2,440-h/2);$("svg").setAttribute("viewBox",`${x-cam.w/2} ${y-h/2} ${cam.w} ${h}`)};
 function fly(x,y,w,ms=900){const a={...cam},t0=performance.now();return new Promise(r=>{(function f(t){const k=Math.min(1,(t-t0)/ms),e=k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2;cam={x:a.x+(x-a.x)*e,y:a.y+(y-a.y)*e,w:a.w+(w-a.w)*e};setCam();k<1?requestAnimationFrame(f):r()})(t0)})}
-function place(d,bob=0){cur=at(d);$("mk").setAttribute("transform",`translate(${cur[0]-56},${cur[1]-423.9-bob}) scale(.56)`)}
+function place(d,bob=0){cur=at(d);$("mk").setAttribute("transform",`translate(${cur[0]-47.6},${cur[1]-360.3-bob}) scale(.476)`)}
 function walk(a,b,ms){return new Promise(r=>{const d0=L[a],d1=L[b],t0=performance.now();(function f(t){const k=Math.min(1,(t-t0)/ms);place(d0+(d1-d0)*k,Math.abs(Math.sin(k*ms/90))*2);cam.x=cur[0];cam.y=cur[1]-10;setCam();k<1?requestAnimationFrame(f):r()})(t0)})}
 function clap(){const t0=performance.now();(function f(t){const k=Math.min(1,(t-t0)/600),e=Math.abs(Math.sin(k*Math.PI*2));
  [["l",54,676,90,688],["r",146,676,110,688]].forEach(([s,a,b,c,d])=>{const x=a+(c-a)*e,y=b+(d-b)*e;$("c"+s).setAttribute("transform",`translate(${x},${y})`);const l=$("a"+s);l.setAttribute("x2",x);l.setAttribute("y2",y)});
  if(k<1)requestAnimationFrame(f)})(t0)}
-function clang(){clap();const c=$("clang");c.setAttribute("x",cur[0]);c.setAttribute("y",cur[1]-62);c.classList.remove("go");void c.getBoundingClientRect();c.classList.add("go")}
+function clang(){clap();const c=$("clang");c.setAttribute("x",cur[0]);c.setAttribute("y",cur[1]-72);c.classList.remove("go");void c.getBoundingClientRect();c.classList.add("go")}
 /* ---- ροή ---- */
 function intro(){
  show(`<h2>Ένα γράμμα για σένα ✉️</h2><p>Έτοιμη να βοηθήσεις το μαϊμουδάκι να παραδώσει ένα γράμμα;</p><div id="zone"><button id="yes" style="left:0;top:0">Ναι! 🐒</button><button id="no" class="alt" style="left:60%;top:0">Όχι</button></div>`);
@@ -116,7 +128,7 @@ function intro(){
   n.style.left=x+"px";n.style.top=t+"px"};
  n.addEventListener("pointerenter",e=>{if(e.pointerType==="mouse")run(e)});
  n.addEventListener("pointerdown",run);n.addEventListener("click",e=>e.preventDefault());n.addEventListener("focus",()=>{run();n.blur()});
- y.onclick=async()=>{show("<p>🐒 Το μαϊμουδάκι ξεκινά από την Πάτρα…</p>");await fly(95,125,170);await walk(0,1,1500);gate()}
+ y.onclick=async()=>{ov=0;show("<p>🐒 Το μαϊμουδάκι ξεκινά από την Πάτρα…</p>");await fly(95,125,170);await walk(0,1,1500);gate()}
 }
 function gate(){
  const g=CFG.gate;
@@ -142,13 +154,18 @@ function arrive(){
  show(`<h2>🏙️ Αθήνα!</h2><p>Το μαϊμουδάκι χτυπά το κουδούνι και βγάζει το γράμμα από την τσέπη του…</p><button id="op">✉️ Άνοιξε το γράμμα</button>`);$("op").onclick=letter;
 }
 function letter(){
- show(`<h2>💌 Το γράμμα</h2><p>${CFG.letter}</p><p><b>Διάλεξε το δώρο σου:</b></p><div class="opts g">${CFG.gifts.map((g,i)=>`<button data-g="${i}">${g[0]} ${g[1]}</button>`).join("")}</div><div id="ex" style="margin-top:12px"></div><p style="font-size:13px;opacity:.7">Όταν πατήσεις «Στείλε», η επιλογή σου φτάνει σε μένα.</p><button id="snd" disabled>Στείλε την επιλογή μου</button><p id="err" style="color:#b03a2e;margin-top:10px"></p>`);
- const chk=()=>{$("snd").disabled=!(S.gift!=null&&(S.gift!==CFG.couponIndex||/^\S+@\S+\.\S+$/.test($("em").value.trim())))};
- document.querySelectorAll("[data-g]").forEach(b=>b.onclick=()=>{S.gift=+b.dataset.g;document.querySelectorAll("[data-g]").forEach(x=>x.classList.toggle("sel",x===b));
-  $("ex").innerHTML=S.gift===CFG.couponIndex?`<p>Σε ποιο email να στείλω το κουπόνι;</p><input id="em" type="email" placeholder="όνομα@email.com" autocomplete="email">`:"";
-  if(S.gift===CFG.couponIndex)$("em").oninput=chk;chk()});
+ show(`<h2>💌 Το γράμμα</h2><p>${CFG.letter}</p><p><b>Διάλεξε το δώρο σου:</b></p><div class="opts g">${CFG.gifts.map((g,i)=>`<button data-g="${i}">${g[0]} ${g[1]}</button>`).join("")}</div>`);
+ document.querySelectorAll("[data-g]").forEach(b=>b.onclick=()=>{S.gift=+b.dataset.g;S.opt=null;detail()});
+}
+function detail(){
+ const g=CFG.gifts[S.gift],cp=S.gift===CFG.couponIndex;
+ show(`<h2>${g[0]} ${g[1]}</h2><p>Διάλεξε μία από τις επιλογές:</p><div class="opts g">${g[2].map((t,i)=>`<button data-o="${i}">${t}</button>`).join("")}</div>${cp?`<p style="margin-top:12px">Σε ποιο email να στείλω το κουπόνι;</p><input id="em" type="email" placeholder="όνομα@email.com" autocomplete="email">`:""}<p style="font-size:13px;opacity:.7;margin-top:10px">Όταν πατήσεις «Στείλε», η επιλογή σου φτάνει σε μένα.</p><div style="display:flex;gap:8px"><button id="bk" class="alt">← Πίσω</button><button id="snd" disabled>Στείλε</button></div><p id="err" style="color:#b03a2e;margin-top:10px"></p>`);
+ const chk=()=>{$("snd").disabled=!(S.opt!=null&&(!cp||/^\S+@\S+\.\S+$/.test($("em").value.trim())))};
+ document.querySelectorAll("[data-o]").forEach(b=>b.onclick=()=>{S.opt=+b.dataset.o;document.querySelectorAll("[data-o]").forEach(x=>x.classList.toggle("sel",x===b));chk()});
+ if(cp)$("em").oninput=chk;
+ $("bk").onclick=letter;
  $("snd").onclick=async()=>{const b=$("snd");b.disabled=true;b.textContent="Στέλνω…";
-  const ok=await send("ΟΛΟΚΛΗΡΩΘΗΚΕ",{gift:CFG.gifts[S.gift][1],coupon_email:S.gift===CFG.couponIndex?$("em").value.trim():"-",gate_attempts:S.att.join(" | ")});
+  const ok=await send("ΟΛΟΚΛΗΡΩΘΗΚΕ",{gift:g[1],gift_option:g[2][S.opt],coupon_email:cp?$("em").value.trim():"-",gate_attempts:S.att.join(" | ")});
   if(ok)show(`<h2>🎉 Παραδόθηκε!</h2><p>Η επιλογή σου έφτασε. Χρόνια πολλά! 🐒💛</p>`);
   else{b.disabled=false;b.textContent="Στείλε ξανά";$("err").textContent="Η αποστολή δεν πέτυχε. Έλεγξε τη σύνδεσή σου και πάτα ξανά."}};
 }
