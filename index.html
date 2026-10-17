@@ -22,13 +22,23 @@ input[type=range]{width:100%;accent-color:var(--pink);height:40px}
 #dbg{display:none;white-space:pre-wrap;font:11px monospace;background:#f6f0f8;padding:8px;margin:0}
 .lb{font-size:18px;font-weight:500;fill:#6B4A66;paint-order:stroke;stroke:#fff;stroke-width:4px;stroke-linejoin:round}
 .lb2{font-size:13px;font-style:italic;fill:#6FAEC0}
-@keyframes pop{0%{opacity:1;transform:translateY(0)}100%{opacity:0;transform:translateY(-26px)}}
-#clang{opacity:0;font-weight:800;font-size:18px;fill:#C99A2E}#clang.go{animation:pop .7s ease-out}
+#fx{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:9}
+#fin{position:absolute;inset:0;overflow:hidden;pointer-events:none;text-align:center;padding-top:7%}
+.big{display:inline-block;max-width:92%;font-size:clamp(30px,9vw,64px);line-height:1.05;font-weight:900;background:linear-gradient(90deg,#E58BAE,#F4A261,#9B72CF);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 3px #fff) drop-shadow(0 3px 0 #fff);animation:zoom .9s cubic-bezier(.2,1.4,.4,1) both}
+@keyframes zoom{from{transform:scale(.2);opacity:0}}
+#panel.fin{max-height:56dvh}
+.wish{background:#FFF8EF;border:2px solid #F8D7E3;border-radius:16px;padding:14px 16px;margin:0 0 10px;font:17px/1.55 Georgia,"Times New Roman",serif;white-space:pre-line;animation:fade 1.2s .8s both}
+.sg{margin-top:10px;text-align:right;font-style:italic;color:#9B7A96}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}}
+@keyframes boom{0%{transform:scale(.2) rotate(-25deg);opacity:0}25%{opacity:1}45%{transform:scale(1.25) rotate(6deg)}70%{transform:scale(1) rotate(-3deg);opacity:1}100%{transform:scale(1.1) rotate(0);opacity:0}}
+@keyframes ring{0%{transform:scale(.4);opacity:.9}100%{transform:scale(2.6);opacity:0}}
+#burst.go{animation:boom .9s ease-out both}#rg.go{animation:ring .8s ease-out both}
 @media (min-width:900px){
 body{min-height:100dvh;display:grid;place-items:center;background:radial-gradient(circle at 12% 18%,#F8D7E3 0,transparent 38%),radial-gradient(circle at 88% 84%,#E7DAF7 0,transparent 40%),radial-gradient(circle at 86% 12%,#D8F0E3 0,transparent 28%),var(--cream)}
 #app{width:100%;max-width:1120px;height:min(100dvh,780px);padding:32px;flex-direction:row;gap:26px;align-items:stretch}
 #map{min-width:0;border-radius:26px;border:6px solid #fff;box-shadow:0 14px 44px #b07a9a33}
 #panel{flex:none;width:380px;align-self:center;max-height:100%;margin:0;padding:26px 24px;border-radius:26px;box-shadow:0 14px 44px #b07a9a33}
+#panel.fin{max-height:100%}
 h2{font-size:24px}p{font-size:17px}button{font-size:17px}.opts button{font-size:16px}
 }
 </style></head><body>
@@ -66,12 +76,12 @@ h2{font-size:24px}p{font-size:17px}button{font-size:17px}.opts button{font-size:
 <g id="cl" transform="translate(54,676)"><circle r="15" fill="#F4C95D" stroke="#B8892B" stroke-width="2"/><circle r="10" fill="none" stroke="#E0A93A" stroke-width="1.5"/><circle r="4" fill="#D9A93C" stroke="#B8892B" stroke-width="1.5"/><path d="M-10 -6 A11 11 0 0 1 -3 -11" fill="none" stroke="#FFF3B8" stroke-width="2" stroke-linecap="round"/></g>
 <g id="cr" transform="translate(146,676)"><circle r="15" fill="#F4C95D" stroke="#B8892B" stroke-width="2"/><circle r="10" fill="none" stroke="#E0A93A" stroke-width="1.5"/><circle r="4" fill="#D9A93C" stroke="#B8892B" stroke-width="1.5"/><path d="M-10 -6 A11 11 0 0 1 -3 -11" fill="none" stroke="#FFF3B8" stroke-width="2" stroke-linecap="round"/></g>
 </g>
-<text id="clang" text-anchor="middle">ΤΣΑΝ!</text>
-</g><rect width="680" height="440" rx="14" fill="none" stroke="#F2B8CC" stroke-width="3"/></svg>
+<g id="bpos"><circle id="rg" r="24" fill="none" stroke="#F4C95D" stroke-width="3" opacity="0"/><g id="burst" opacity="0"><g id="rays" stroke="#E58BAE" stroke-width="2.5" stroke-linecap="round"></g><polygon id="st1" fill="#FFE066" stroke="#E58BAE" stroke-width="2.5" stroke-linejoin="round"/><polygon id="st2" fill="#FFF3B8"/><text id="bword" y="5" text-anchor="middle" style="font-size:13px;font-weight:900;fill:#C2476F">ΤΣΙΝ!</text></g></g></g><rect width="680" height="440" rx="14" fill="none" stroke="#F2B8CC" stroke-width="3"/></svg>
 </div>
 <div id="panel"></div>
 <pre id="dbg"></pre>
 </div>
+<canvas id="fx"></canvas>
 <script src="config.js"></script>
 <script>
 /* ====== ΡΥΘΜΙΣΕΙΣ — άλλαξε εδώ ====== */
@@ -87,6 +97,10 @@ const CFG={
   ["🎟️","Κουπόνι για το επόμενο ραντεβού",["Σούσι","Καφές και βόλτα","Φαγητό της επιλογής σου","Έκπληξη"]],
   ["✉️","Επιλογή 4",["Επιλογή 4α","Επιλογή 4β","Επιλογή 4γ","Επιλογή 4δ"]]
  ],
+ finale:{head:"Χρόνια πολλά!",title:"ΧΡΟΝΙΑ ΠΟΛΛΑ",name:"",   // name: βάλε το όνομά της → «ΧΡΟΝΙΑ ΠΟΛΛΑ, ΜΑΡΙΑ!»
+  wish:"Εδώ θα μπει η ευχή σου, 3-4 προτάσεις.\nΜπορείς να αλλάζεις γραμμή με \\n.",
+  sign:""},                                  // sign: υπογραφή κάτω από την ευχή (προαιρετικά)
+ burstWord:"ΤΣΙΝ!",   // η λέξη μέσα στο «σκάσιμο» στο Ξυλόκαστρο
  couponIndex:2                      // ποια επιλογή ζητά email
 };
 /* ==================================== */
@@ -118,7 +132,10 @@ function walk(a,b,ms){return new Promise(r=>{const d0=L[a],d1=L[b],t0=performanc
 function clap(){const t0=performance.now();(function f(t){const k=Math.min(1,(t-t0)/600),e=Math.abs(Math.sin(k*Math.PI*2));
  [["l",54,676,90,688],["r",146,676,110,688]].forEach(([s,a,b,c,d])=>{const x=a+(c-a)*e,y=b+(d-b)*e;$("c"+s).setAttribute("transform",`translate(${x},${y})`);const l=$("a"+s);l.setAttribute("x2",x);l.setAttribute("y2",y)});
  if(k<1)requestAnimationFrame(f)})(t0)}
-function clang(){clap();const c=$("clang");c.setAttribute("x",cur[0]);c.setAttribute("y",cur[1]-72);c.classList.remove("go");void c.getBoundingClientRect();c.classList.add("go")}
+function clang(w){clap();if(!w)return;$("bpos").setAttribute("transform",`translate(${cur[0]},${cur[1]-80})`);[$("burst"),$("rg")].forEach(e=>{e.classList.remove("go");void e.getBoundingClientRect();e.classList.add("go")})}
+const star=(a,b,n)=>Array.from({length:2*n},(_,i)=>{const t=Math.PI*i/n,r=i%2?b:a;return(Math.cos(t)*r).toFixed(1)+","+(Math.sin(t)*r).toFixed(1)}).join(" ");
+$("bword").textContent=CFG.burstWord;$("st1").setAttribute("points",star(28,19,12));$("st2").setAttribute("points",star(20,14,12));
+$("rays").innerHTML=Array.from({length:12},(_,i)=>{const t=Math.PI*2*i/12;return`<line x1="${(Math.cos(t)*34).toFixed(1)}" y1="${(Math.sin(t)*34).toFixed(1)}" x2="${(Math.cos(t)*43).toFixed(1)}" y2="${(Math.sin(t)*43).toFixed(1)}"/>`}).join("");
 /* ---- ροή ---- */
 function intro(){
  show(`<h2>Ένα γράμμα για σένα ✉️</h2><p>Έτοιμη να βοηθήσεις το μαϊμουδάκι να παραδώσει ένα γράμμα;</p><div id="zone"><button id="yes" style="left:0;top:0">Ναι! 🐒</button><button id="no" class="alt" style="left:60%;top:0">Όχι</button></div>`);
@@ -143,7 +160,7 @@ async function pick(i){
 }
 function stop1(){
  let n=0;show(`<h2>🏖️ Ξυλόκαστρο</h2><p>Το μαϊμουδάκι σταμάτησε για ανάσα. Άγγιξέ το για να χτυπήσει τα πιατίνια!</p><div id="nx"></div>`);
- $("mk").onclick=()=>{clang();if(++n===1){$("nx").innerHTML=`<button id="c1">Συνέχεια</button>`;$("c1").onclick=async()=>{$("mk").onclick=null;show("<p>🐒 Προς τον Ισθμό…</p>");await walk(6,9,3500);stop2()}}}
+ $("mk").onclick=()=>{clang(1);if(++n===1){$("nx").innerHTML=`<button id="c1">Συνέχεια</button>`;$("c1").onclick=async()=>{$("mk").onclick=null;show("<p>🐒 Προς τον Ισθμό…</p>");await walk(6,9,3500);stop2()}}}
 }
 function stop2(){
  show(`<h2>⚓ Ισθμός Κορίνθου</h2><p>Η γέφυρα είναι σηκωμένη! Σύρε το ρυθμιστικό για να την κατεβάσεις.</p><input id="sl" type="range" min="0" max="100" value="0"><div id="nx2"></div>`);
@@ -166,8 +183,23 @@ function detail(){
  $("bk").onclick=letter;
  $("snd").onclick=async()=>{const b=$("snd");b.disabled=true;b.textContent="Στέλνω…";
   const ok=await send("ΟΛΟΚΛΗΡΩΘΗΚΕ",{gift:g[1],gift_option:g[2][S.opt],coupon_email:cp?$("em").value.trim():"-",gate_attempts:S.att.join(" | ")});
-  if(ok)show(`<h2>🎉 Παραδόθηκε!</h2><p>Η επιλογή σου έφτασε. Χρόνια πολλά! 🐒💛</p>`);
+  if(ok)finale();
   else{b.disabled=false;b.textContent="Στείλε ξανά";$("err").textContent="Η αποστολή δεν πέτυχε. Έλεγξε τη σύνδεσή σου και πάτα ξανά."}};
+}
+/* ---- φινάλε ---- */
+const fx=$("fx"),g2=fx.getContext("2d"),CL=["#E58BAE","#F4C95D","#BFE6D5","#CDB8F0","#FFB6C9","#9ED4E0"],R=Math.random;let ps=[],on=0;
+function loop(){fx.width=innerWidth;fx.height=innerHeight;ps=ps.filter(p=>p.y<fx.height+30&&p.l>0);
+ ps.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.vy+=p.g;p.r+=p.vr;p.l--;g2.save();g2.globalAlpha=Math.min(1,p.l/30);g2.fillStyle=p.c;g2.translate(p.x,p.y);g2.rotate(p.r);g2.fillRect(-p.w/2,-p.h/2,p.w,p.h);g2.restore()});
+ if(ps.length)requestAnimationFrame(loop);else{on=0;fx.width=0}}
+const add=a=>{ps.push(...a);if(!on){on=1;loop()}};
+const confetti=n=>add(Array.from({length:n},()=>({x:R()*innerWidth,y:-20-R()*200,vx:(R()-.5)*3,vy:2+R()*3,g:.02,w:6+R()*6,h:4+R()*5,r:R()*6,vr:(R()-.5)*.3,l:420,c:CL[R()*6|0]})));
+const firework=(x,y)=>{const c=CL[R()*6|0];add(Array.from({length:46},()=>{const a=R()*6.283,v=1.5+R()*4;return{x,y,vx:Math.cos(a)*v,vy:Math.sin(a)*v,g:.06,w:4,h:4,r:0,vr:0,l:70,c}}))};
+async function finale(){
+ const F=CFG.finale;
+ $("map").insertAdjacentHTML("beforeend",`<div id="fin"><div class="big">${F.title}${F.name?", "+F.name:""}!</div></div>`);
+ $("panel").classList.add("fin");show(`<h2>🎉 ${F.head}</h2><div class="wish">${F.wish}${F.sign?`<div class="sg">${F.sign}</div>`:""}</div><button id="enc">🥁 Ξανά τα πιατίνια!</button>`);
+ const party=()=>{[0,700,1400].forEach(t=>setTimeout(clang,t));confetti(140);[0,350,700,1050,1400].forEach(t=>setTimeout(()=>firework(innerWidth*(.15+R()*.7),innerHeight*(.1+R()*.3)),t));setTimeout(()=>confetti(100),900)};
+ $("enc").onclick=party;await fly(cur[0],cur[1]-10,150,1200);party();
 }
 addEventListener("resize",setCam);if(window.ResizeObserver)new ResizeObserver(setCam).observe($("map"));setCam();place(0);intro();
 </script></body></html>
