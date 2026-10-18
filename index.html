@@ -44,7 +44,7 @@ h2{font-size:24px}p{font-size:17px}button{font-size:17px}.opts button{font-size:
 </style></head><body>
 <div id="app">
 <div id="map"><svg id="svg" xmlns="http://www.w3.org/2000/svg">
-<defs><clipPath id="sh"><rect width="680" height="440" rx="14"/></clipPath></defs><text x="340" y="-72" text-anchor="middle" style="font-size:34px;font-weight:700;fill:#6B4A66">Το ταξίδι του μαϊμουδάκι</text><text x="340" y="-36" text-anchor="middle" style="font-size:18px;fill:#9B7A96">Από την Πάτρα στην Αθήνα, με ένα γράμμα</text><g clip-path="url(#sh)"><rect width="680" height="440" fill="#FFE6D6"/>
+<defs><clipPath id="sh"><rect width="680" height="440" rx="14"/></clipPath></defs><text id="ttl" x="340" y="-72" text-anchor="middle" style="font-size:34px;font-weight:700;fill:#6B4A66"></text><text id="sub" x="340" y="-36" text-anchor="middle" style="font-size:18px;fill:#9B7A96"></text><g clip-path="url(#sh)"><rect width="680" height="440" fill="#FFE6D6"/>
 <path d="M300 60 q30 -34 60 0 z" fill="#D8F0E3"/><path d="M450 70 q35 -40 70 0 z" fill="#F8D7E3"/><path d="M190 300 q30 -34 60 0 z" fill="#E7DAF7"/><path d="M250 340 q35 -40 70 0 z" fill="#D8F0E3"/><path d="M540 140 q30 -34 60 0 z" fill="#F8D7E3"/>
 <polygon points="0,96 30,92 60,100 80,104 97,109 112,89 140,95 183,92 215,86 240,80 267,76 300,84 326,95 360,104 405,129 430,138 470,152 476,168 462,182 448,196 440,200 430,214 418,228 400,234 390,236 372,228 352,218 336,206 321,195 300,184 270,172 240,162 209,152 193,143 178,136 150,129 124,124 102,121 86,136 70,141 39,145 18,155 0,165" fill="#CDEBF2" stroke="#F5D3C0" stroke-width="3" stroke-linejoin="round"/>
 <polygon points="418,250 440,256 455,243 473,229 490,228 505,232 509,226 522,224 535,228 548,236 566,236 584,238 596,246 612,261 618,272 621,280 640,296 660,318 684,334 684,420 560,420 548,400 535,383 528,372 517,350 500,346 480,336 457,340 442,318 430,290" fill="#CDEBF2" stroke="#F5D3C0" stroke-width="3" stroke-linejoin="round"/>
@@ -83,26 +83,15 @@ h2{font-size:24px}p{font-size:17px}button{font-size:17px}.opts button{font-size:
 </div>
 <canvas id="fx"></canvas>
 <script src="config.js"></script>
+<script src="texts.js"></script>
 <script>
 /* ====== ΡΥΘΜΙΣΕΙΣ — άλλαξε εδώ ====== */
 const CFG={
  endpoint:"https://api.web3forms.com/submit",
- key:window.WEB3FORMS_KEY||"ΒΑΛΕ_ΕΔΩ_ΤΟ_KEY",   // το κλειδί μπαίνει στο αρχείο config.js
- subject:"Γράμμα γενεθλίων",
- gate:{q:"Ερώτηση 1",a:["Απάντηση 1","Απάντηση 2","Απάντηση 3","Απάντηση 4","Απάντηση 5"],ok:0},
- letter:"Εδώ θα μπει η ευχή (προσωρινό κείμενο).",
- gifts:[   // [εικονίδιο, όνομα, [οι 4 επιλογές του επόμενου βήματος]]
-  ["💐","Λουλούδια",["Τριαντάφυλλα","Ανοιξιάτικο μπουκέτο","Τουλίπες","Αγριολούλουδα"]],
-  ["🥐","Πρωινό",["Γλυκό","Αλμυρό","Ελαφρύ και υγιεινό","Πλούσιο brunch"]],
-  ["🎟️","Κουπόνι για το επόμενο ραντεβού",["Σούσι","Καφές και βόλτα","Φαγητό της επιλογής σου","Έκπληξη"]],
-  ["✉️","Επιλογή 4",["Επιλογή 4α","Επιλογή 4β","Επιλογή 4γ","Επιλογή 4δ"]]
- ],
- finale:{head:"Χρόνια πολλά!",title:"ΧΡΟΝΙΑ ΠΟΛΛΑ",name:"",   // name: βάλε το όνομά της → «ΧΡΟΝΙΑ ΠΟΛΛΑ, ΜΑΡΙΑ!»
-  wish:"Εδώ θα μπει η ευχή σου, 3-4 προτάσεις.\nΜπορείς να αλλάζεις γραμμή με \\n.",
-  sign:""},                                  // sign: υπογραφή κάτω από την ευχή (προαιρετικά)
- burstWord:"ΤΣΙΝ!",   // η λέξη μέσα στο «σκάσιμο» στο Ξυλόκαστρο
- couponIndex:2                      // ποια επιλογή ζητά email
+ key:window.WEB3FORMS_KEY||"ΒΑΛΕ_ΕΔΩ_ΤΟ_KEY"   // το κλειδί μπαίνει στο αρχείο config.js
 };
+const T=window.TEXTS;   // όλα τα κείμενα είναι στο αρχείο texts.js
+if(!T){document.body.innerHTML="<p style='padding:24px'>Λείπει το αρχείο texts.js</p>";throw new Error("texts.js missing")}
 /* ==================================== */
 const $=id=>document.getElementById(id),S={att:[],fail:0,gift:null};
 const show=h=>{$("panel").innerHTML=h};
@@ -111,7 +100,7 @@ let vid="?",visits=1;
 try{vid=localStorage.vid||(localStorage.vid=(crypto.randomUUID?crypto.randomUUID():Math.random().toString(36).slice(2)));visits=(+localStorage.visits||0)+1;localStorage.visits=visits}catch(e){}
 const info=()=>{const n=navigator,s=screen;return{visitor_id:vid,visit_no:visits,time:new Date().toString(),timezone:Intl.DateTimeFormat().resolvedOptions().timeZone,languages:(n.languages||[n.language]).join(","),user_agent:n.userAgent,platform:n.platform,screen:s.width+"x"+s.height+" @"+devicePixelRatio+"x",viewport:innerWidth+"x"+innerHeight,touch_points:n.maxTouchPoints,referrer:document.referrer||"-"}};
 async function send(title,extra){
- const d={...extra,...info()},p={access_key:CFG.key,subject:CFG.subject+" – "+title,from_name:"Γράμμα γενεθλίων",message:Object.entries(d).map(([k,v])=>k+": "+v).join("\n")};
+ const d={...extra,...info()},p={access_key:CFG.key,subject:T.mailSubject+" – "+title,from_name:"Γράμμα γενεθλίων",message:Object.entries(d).map(([k,v])=>k+": "+v).join("\n")};
  if(CFG.key.startsWith("ΒΑΛΕ")){dbg("[ΔΟΚΙΜΗ] "+p.subject+"\n"+p.message);return true}
  try{const r=await fetch(CFG.endpoint,{method:"POST",headers:{"Content-Type":"application/json",Accept:"application/json"},body:JSON.stringify(p)});const j=await r.json().catch(()=>({}));return r.ok&&j.success!==false}catch(e){return false}
 }
@@ -121,8 +110,8 @@ const L=[0];for(let i=1;i<P.length;i++)L[i]=L[i-1]+Math.hypot(P[i][0]-P[i-1][0],
 const at=d=>{let i=1;while(i<P.length-1&&L[i]<d)i++;const k=(d-L[i-1])/(L[i]-L[i-1]);return[P[i-1][0]+(P[i][0]-P[i-1][0])*k,P[i-1][1]+(P[i][1]-P[i-1][1])*k]};
 $("route").setAttribute("points",P.join(" "));
 $("marks").innerHTML=[0,1,6,9,14].map(i=>`<circle cx="${P[i][0]}" cy="${P[i][1]}" r="${i<2?8:9}" fill="#fff" stroke="#E58BAE" stroke-width="4"/>`).join("")+
-[[86,160,"Πάτρα","middle"],[100,76,"Ρίο–Αντίρριο","middle"],[332,170,"Ξυλόκαστρο","middle"],[420,268,"Ισθμός Κορίνθου","end"],[608,200,"Αθήνα","middle"]].map(a=>`<text class="lb" x="${a[0]}" y="${a[1]}" text-anchor="${a[3]}">${a[2]}</text>`).join("")+
-`<text class="lb2" x="230" y="118" text-anchor="middle">Κορινθιακός</text><text class="lb2" x="505" y="300" text-anchor="middle">Σαρωνικός</text>`;
+[[86,160,T.map[0],"middle"],[100,76,T.map[1],"middle"],[332,170,T.map[2],"middle"],[420,268,T.map[3],"end"],[608,200,T.map[4],"middle"]].map(a=>`<text class="lb" x="${a[0]}" y="${a[1]}" text-anchor="${a[3]}">${a[2]}</text>`).join("")+
+`<text class="lb2" x="230" y="118" text-anchor="middle">${T.sea[0]}</text><text class="lb2" x="505" y="300" text-anchor="middle">${T.sea[1]}</text>`;
 let ov=1,cam={x:340,y:220,w:680},cur=P[0];
 const cl=(v,a,b)=>Math.min(Math.max(v,Math.min(a,b)),Math.max(a,b));
 const setCam=()=>{const m=$("map");if(ov)cam.w=Math.max(700,660*m.clientWidth/(m.clientHeight||1));const h=cam.w*m.clientHeight/m.clientWidth,x=cl(cam.x,cam.w/2,680-cam.w/2),y=cl(cam.y,h/2,440-h/2);$("svg").setAttribute("viewBox",`${x-cam.w/2} ${y-h/2} ${cam.w} ${h}`)};
@@ -134,57 +123,57 @@ function clap(){const t0=performance.now();(function f(t){const k=Math.min(1,(t-
  if(k<1)requestAnimationFrame(f)})(t0)}
 function clang(w){clap();if(!w)return;$("bpos").setAttribute("transform",`translate(${cur[0]},${cur[1]-80})`);[$("burst"),$("rg")].forEach(e=>{e.classList.remove("go");void e.getBoundingClientRect();e.classList.add("go")})}
 const star=(a,b,n)=>Array.from({length:2*n},(_,i)=>{const t=Math.PI*i/n,r=i%2?b:a;return(Math.cos(t)*r).toFixed(1)+","+(Math.sin(t)*r).toFixed(1)}).join(" ");
-$("bword").textContent=CFG.burstWord;$("st1").setAttribute("points",star(28,19,12));$("st2").setAttribute("points",star(20,14,12));
+$("bword").textContent=T.burstWord;$("ttl").textContent=T.mapTitle;$("sub").textContent=T.mapSub;document.title=T.pageTitle;$("st1").setAttribute("points",star(28,19,12));$("st2").setAttribute("points",star(20,14,12));
 $("rays").innerHTML=Array.from({length:12},(_,i)=>{const t=Math.PI*2*i/12;return`<line x1="${(Math.cos(t)*34).toFixed(1)}" y1="${(Math.sin(t)*34).toFixed(1)}" x2="${(Math.cos(t)*43).toFixed(1)}" y2="${(Math.sin(t)*43).toFixed(1)}"/>`}).join("");
 /* ---- ροή ---- */
 function intro(){
- show(`<h2>Ένα γράμμα για σένα ✉️</h2><p>Έτοιμη να βοηθήσεις το μαϊμουδάκι να παραδώσει ένα γράμμα;</p><div id="zone"><button id="yes" style="left:0;top:0">Ναι! 🐒</button><button id="no" class="alt" style="left:60%;top:0">Όχι</button></div>`);
+ show(`<h2>${T.introTitle}</h2><p>${T.introText}</p><div id="zone"><button id="yes" style="left:0;top:0">${T.yes}</button><button id="no" class="alt" style="left:60%;top:0">${T.no}</button></div>`);
  const z=$("zone"),n=$("no"),y=$("yes");
  const run=e=>{e&&e.preventDefault();const zb=z.getBoundingClientRect(),yb=y.getBoundingClientRect(),w=n.offsetWidth,h=n.offsetHeight;let x,t,k=0;
   do{x=Math.random()*(z.clientWidth-w);t=Math.random()*(z.clientHeight-h);k++}while(k<25&&x+zb.left<yb.right+10&&x+w+zb.left>yb.left-10&&t+zb.top<yb.bottom+10&&t+h+zb.top>yb.top-10);
   n.style.left=x+"px";n.style.top=t+"px"};
  n.addEventListener("pointerenter",e=>{if(e.pointerType==="mouse")run(e)});
  n.addEventListener("pointerdown",run);n.addEventListener("click",e=>e.preventDefault());n.addEventListener("focus",()=>{run();n.blur()});
- y.onclick=async()=>{ov=0;show("<p>🐒 Το μαϊμουδάκι ξεκινά από την Πάτρα…</p>");await fly(95,125,170);await walk(0,1,1500);gate()}
+ y.onclick=async()=>{ov=0;show("<p>"+T.walk1+"</p>");await fly(95,125,170);await walk(0,1,1500);gate()}
 }
 function gate(){
- const g=CFG.gate;
- show(`<h2>🛂 Ρίο–Αντίρριο: έλεγχος διαβατηρίων</h2><p>${g.q}</p><div class="opts">${g.a.map((t,i)=>`<button data-i="${i}">${t}</button>`).join("")}</div>`);
+ const g=T.gate;
+ show(`<h2>${T.gateTitle}</h2><p>${g.q}</p><div class="opts">${g.a.map((t,i)=>`<button data-i="${i}">${t}</button>`).join("")}</div>`);
  document.querySelectorAll("[data-i]").forEach(b=>b.onclick=()=>pick(+b.dataset.i));
 }
 async function pick(i){
- const ok=i===CFG.gate.ok;S.att.push((ok?"ΣΩΣΤΟ: ":"ΛΑΘΟΣ: ")+CFG.gate.a[i]+" ("+new Date().toLocaleTimeString("el-GR")+")");
- if(ok){show("<p>🐒 Το μαϊμουδάκι συνεχίζει προς Ξυλόκαστρο…</p>");await walk(1,6,4200);return stop1()}
- show(`<h2>Χμμ… 🤔</h2><p>Μάλλον δεν είσαι η γενέθλιος… ή μήπως έκανες λάθος;</p><button id="again">Δοκίμασε ξανά</button>`);$("again").onclick=gate;
- if(!S.fail){S.fail=1;send("αποτυχία στον γρίφο",{attempts:S.att.join(" | ")})}
+ const ok=i===T.gate.ok;S.att.push((ok?"ΣΩΣΤΟ: ":"ΛΑΘΟΣ: ")+T.gate.a[i]+" ("+new Date().toLocaleTimeString("el-GR")+")");
+ if(ok){show("<p>"+T.walk2+"</p>");await walk(1,6,4200);return stop1()}
+ show(`<h2>${T.failTitle}</h2><p>${T.failText}</p><button id="again">${T.retry}</button>`);$("again").onclick=gate;
+ if(!S.fail){S.fail=1;send(T.mailFail,{attempts:S.att.join(" | ")})}
 }
 function stop1(){
- let n=0;show(`<h2>🏖️ Ξυλόκαστρο</h2><p>Το μαϊμουδάκι σταμάτησε για ανάσα. Άγγιξέ το για να χτυπήσει τα πιατίνια!</p><div id="nx"></div>`);
- $("mk").onclick=()=>{clang(1);if(++n===1){$("nx").innerHTML=`<button id="c1">Συνέχεια</button>`;$("c1").onclick=async()=>{$("mk").onclick=null;show("<p>🐒 Προς τον Ισθμό…</p>");await walk(6,9,3500);stop2()}}}
+ let n=0;show(`<h2>${T.st1Title}</h2><p>${T.st1Text}</p><div id="nx"></div>`);
+ $("mk").onclick=()=>{clang(1);if(++n===1){$("nx").innerHTML=`<button id="c1">${T.next}</button>`;$("c1").onclick=async()=>{$("mk").onclick=null;show("<p>"+T.walk3+"</p>");await walk(6,9,3500);stop2()}}}
 }
 function stop2(){
- show(`<h2>⚓ Ισθμός Κορίνθου</h2><p>Η γέφυρα είναι σηκωμένη! Σύρε το ρυθμιστικό για να την κατεβάσεις.</p><input id="sl" type="range" min="0" max="100" value="0"><div id="nx2"></div>`);
+ show(`<h2>${T.st2Title}</h2><p>${T.st2Text}</p><input id="sl" type="range" min="0" max="100" value="0"><div id="nx2"></div>`);
  const sl=$("sl");sl.oninput=()=>{const v=sl.value/100;$("lift").setAttribute("transform",`rotate(${-70*(1-v)} 406 239)`);
-  if(v===1&&!sl.dataset.d){sl.dataset.d=1;sl.disabled=true;$("nx2").innerHTML=`<button id="c2">Συνέχεια</button>`;$("c2").onclick=async()=>{show("<p>🐒 Τελευταίο κομμάτι προς την Αθήνα…</p>");await walk(9,14,5000);arrive()}}};
+  if(v===1&&!sl.dataset.d){sl.dataset.d=1;sl.disabled=true;$("nx2").innerHTML=`<button id="c2">${T.next}</button>`;$("c2").onclick=async()=>{show("<p>"+T.walk4+"</p>");await walk(9,14,5000);arrive()}}};
 }
 function arrive(){
- show(`<h2>🏙️ Αθήνα!</h2><p>Το μαϊμουδάκι χτυπά το κουδούνι και βγάζει το γράμμα από την τσέπη του…</p><button id="op">✉️ Άνοιξε το γράμμα</button>`);$("op").onclick=letter;
+ show(`<h2>${T.arriveTitle}</h2><p>${T.arriveText}</p><button id="op">${T.openLetter}</button>`);$("op").onclick=letter;
 }
 function letter(){
- show(`<h2>💌 Το γράμμα</h2><p>${CFG.letter}</p><p><b>Διάλεξε το δώρο σου:</b></p><div class="opts g">${CFG.gifts.map((g,i)=>`<button data-g="${i}">${g[0]} ${g[1]}</button>`).join("")}</div>`);
+ show(`<h2>${T.letterTitle}</h2><p>${T.letter}</p><p><b>${T.pickGift}</b></p><div class="opts g">${T.gifts.map((g,i)=>`<button data-g="${i}">${g[0]} ${g[1]}</button>`).join("")}</div>`);
  document.querySelectorAll("[data-g]").forEach(b=>b.onclick=()=>{S.gift=+b.dataset.g;S.opt=null;detail()});
 }
 function detail(){
- const g=CFG.gifts[S.gift],cp=S.gift===CFG.couponIndex;
- show(`<h2>${g[0]} ${g[1]}</h2><p>Διάλεξε μία από τις επιλογές:</p><div class="opts g">${g[2].map((t,i)=>`<button data-o="${i}">${t}</button>`).join("")}</div>${cp?`<p style="margin-top:12px">Σε ποιο email να στείλω το κουπόνι;</p><input id="em" type="email" placeholder="όνομα@email.com" autocomplete="email">`:""}<p style="font-size:13px;opacity:.7;margin-top:10px">Όταν πατήσεις «Στείλε», η επιλογή σου φτάνει σε μένα.</p><div style="display:flex;gap:8px"><button id="bk" class="alt">← Πίσω</button><button id="snd" disabled>Στείλε</button></div><p id="err" style="color:#b03a2e;margin-top:10px"></p>`);
+ const g=T.gifts[S.gift],cp=S.gift===T.couponIndex;
+ show(`<h2>${g[0]} ${g[1]}</h2><p>${T.pickOption}</p><div class="opts g">${g[2].map((t,i)=>`<button data-o="${i}">${t}</button>`).join("")}</div>${cp?`<p style="margin-top:12px">${T.emailAsk}</p><input id="em" type="email" placeholder="${T.emailPh}" autocomplete="email">`:""}<p style="font-size:13px;opacity:.7;margin-top:10px">${g[3]}</p><div style="display:flex;gap:8px"><button id="bk" class="alt">${T.back}</button><button id="snd" disabled>${T.send}</button></div><p id="err" style="color:#b03a2e;margin-top:10px"></p>`);
  const chk=()=>{$("snd").disabled=!(S.opt!=null&&(!cp||/^\S+@\S+\.\S+$/.test($("em").value.trim())))};
  document.querySelectorAll("[data-o]").forEach(b=>b.onclick=()=>{S.opt=+b.dataset.o;document.querySelectorAll("[data-o]").forEach(x=>x.classList.toggle("sel",x===b));chk()});
  if(cp)$("em").oninput=chk;
  $("bk").onclick=letter;
- $("snd").onclick=async()=>{const b=$("snd");b.disabled=true;b.textContent="Στέλνω…";
-  const ok=await send("ΟΛΟΚΛΗΡΩΘΗΚΕ",{gift:g[1],gift_option:g[2][S.opt],coupon_email:cp?$("em").value.trim():"-",gate_attempts:S.att.join(" | ")});
+ $("snd").onclick=async()=>{const b=$("snd");b.disabled=true;b.textContent=T.sending;
+  const ok=await send(T.mailDone,{gift:g[1],gift_option:g[2][S.opt],coupon_email:cp?$("em").value.trim():"-",gate_attempts:S.att.join(" | ")});
   if(ok)finale();
-  else{b.disabled=false;b.textContent="Στείλε ξανά";$("err").textContent="Η αποστολή δεν πέτυχε. Έλεγξε τη σύνδεσή σου και πάτα ξανά."}};
+  else{b.disabled=false;b.textContent=T.send;$("err").textContent=T.sendFail}};
 }
 /* ---- φινάλε ---- */
 const fx=$("fx"),g2=fx.getContext("2d"),CL=["#E58BAE","#F4C95D","#BFE6D5","#CDB8F0","#FFB6C9","#9ED4E0"],R=Math.random;let ps=[],on=0;
@@ -195,9 +184,9 @@ const add=a=>{ps.push(...a);if(!on){on=1;loop()}};
 const confetti=n=>add(Array.from({length:n},()=>({x:R()*innerWidth,y:-20-R()*200,vx:(R()-.5)*3,vy:2+R()*3,g:.02,w:6+R()*6,h:4+R()*5,r:R()*6,vr:(R()-.5)*.3,l:420,c:CL[R()*6|0]})));
 const firework=(x,y)=>{const c=CL[R()*6|0];add(Array.from({length:46},()=>{const a=R()*6.283,v=1.5+R()*4;return{x,y,vx:Math.cos(a)*v,vy:Math.sin(a)*v,g:.06,w:4,h:4,r:0,vr:0,l:70,c}}))};
 async function finale(){
- const F=CFG.finale;
+ const F=T.finale;
  $("map").insertAdjacentHTML("beforeend",`<div id="fin"><div class="big">${F.title}${F.name?", "+F.name:""}!</div></div>`);
- $("panel").classList.add("fin");show(`<h2>🎉 ${F.head}</h2><div class="wish">${F.wish}${F.sign?`<div class="sg">${F.sign}</div>`:""}</div><button id="enc">🥁 Ξανά τα πιατίνια!</button>`);
+ $("panel").classList.add("fin");show(`<h2>🎉 ${F.head}</h2><div class="wish">${F.wish}${F.sign?`<div class="sg">${F.sign}</div>`:""}</div><button id="enc">${T.again}</button>`);
  const party=()=>{[0,700,1400].forEach(t=>setTimeout(clang,t));confetti(140);[0,350,700,1050,1400].forEach(t=>setTimeout(()=>firework(innerWidth*(.15+R()*.7),innerHeight*(.1+R()*.3)),t));setTimeout(()=>confetti(100),900)};
  $("enc").onclick=party;await fly(cur[0],cur[1]-10,150,1200);party();
 }
