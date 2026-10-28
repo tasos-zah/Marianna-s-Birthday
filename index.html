@@ -33,6 +33,16 @@ input[type=range]{width:100%;accent-color:var(--pink);height:40px}
 @keyframes boom{0%{transform:scale(.2) rotate(-25deg);opacity:0}25%{opacity:1}45%{transform:scale(1.25) rotate(6deg)}70%{transform:scale(1) rotate(-3deg);opacity:1}100%{transform:scale(1.1) rotate(0);opacity:0}}
 @keyframes ring{0%{transform:scale(.4);opacity:.9}100%{transform:scale(2.6);opacity:0}}
 #burst.go{animation:boom .9s ease-out both}#rg.go{animation:ring .8s ease-out both}
+#hello{position:fixed;inset:0;z-index:8;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;background:radial-gradient(circle at 18% 14%,#F8D7E3 0,transparent 45%),radial-gradient(circle at 86% 86%,#E7DAF7 0,transparent 45%),radial-gradient(circle at 86% 12%,#D8F0E3 0,transparent 35%),#FFF3E8}
+#hello.out{opacity:0;transition:opacity .6s;pointer-events:none}
+#bub{position:relative;width:100%;max-width:440px;box-sizing:border-box;background:#fff;border:4px solid #F2B8CC;border-radius:30px;padding:22px 22px 14px;text-align:center;box-shadow:0 10px 30px #e58bae33;animation:zoom .7s .35s cubic-bezier(.2,1.4,.4,1) both}
+#bub::before{content:"";position:absolute;left:50%;bottom:-27px;margin-left:-20px;border:20px solid transparent;border-top:24px solid #F2B8CC;border-bottom:0}
+#bub::after{content:"";position:absolute;left:50%;bottom:-19px;margin-left:-16px;border:16px solid transparent;border-top:20px solid #fff;border-bottom:0}
+#bub p{font-size:clamp(18px,4.6vw,23px);line-height:1.35;font-weight:700;margin:0 0 14px}
+#hm{width:min(72vw,300px,34vh);height:auto;margin-top:34px;overflow:visible;animation:rise .8s both,bob 2.4s ease-in-out .9s infinite}
+@keyframes rise{from{transform:translateY(40px);opacity:0}}
+@keyframes bob{50%{transform:translateY(-6px)}}
+#panel p,#panel h2,#bub p{white-space:pre-line}
 @media (min-width:900px){
 body{min-height:100dvh;display:grid;place-items:center;background:radial-gradient(circle at 12% 18%,#F8D7E3 0,transparent 38%),radial-gradient(circle at 88% 84%,#E7DAF7 0,transparent 40%),radial-gradient(circle at 86% 12%,#D8F0E3 0,transparent 28%),var(--cream)}
 #app{width:100%;max-width:1120px;height:min(100dvh,780px);padding:32px;flex-direction:row;gap:26px;align-items:stretch}
@@ -44,12 +54,12 @@ h2{font-size:24px}p{font-size:17px}button{font-size:17px}.opts button{font-size:
 </style></head><body>
 <div id="app">
 <div id="map"><svg id="svg" xmlns="http://www.w3.org/2000/svg">
-<defs><clipPath id="sh"><rect width="680" height="440" rx="14"/></clipPath></defs><text id="ttl" x="340" y="-72" text-anchor="middle" style="font-size:34px;font-weight:700;fill:#6B4A66"></text><text id="sub" x="340" y="-36" text-anchor="middle" style="font-size:18px;fill:#9B7A96"></text><g clip-path="url(#sh)"><rect width="680" height="440" fill="#FFE6D6"/>
+<defs><clipPath id="sh"><rect x="-40" width="760" height="440" rx="14"/></clipPath></defs><text id="ttl" x="340" y="-72" text-anchor="middle" style="font-size:34px;font-weight:700;fill:#6B4A66"></text><text id="sub" x="340" y="-36" text-anchor="middle" style="font-size:18px;fill:#9B7A96"></text><g clip-path="url(#sh)"><rect x="-40" width="760" height="440" fill="#FFE6D6"/>
 <path d="M300 60 q30 -34 60 0 z" fill="#D8F0E3"/><path d="M450 70 q35 -40 70 0 z" fill="#F8D7E3"/><path d="M190 300 q30 -34 60 0 z" fill="#E7DAF7"/><path d="M250 340 q35 -40 70 0 z" fill="#D8F0E3"/><path d="M540 140 q30 -34 60 0 z" fill="#F8D7E3"/>
-<polygon points="0,96 30,92 60,100 80,104 97,109 112,89 140,95 183,92 215,86 240,80 267,76 300,84 326,95 360,104 405,129 430,138 470,152 476,168 462,182 448,196 440,200 430,214 418,228 400,234 390,236 372,228 352,218 336,206 321,195 300,184 270,172 240,162 209,152 193,143 178,136 150,129 124,124 102,121 86,136 70,141 39,145 18,155 0,165" fill="#CDEBF2" stroke="#F5D3C0" stroke-width="3" stroke-linejoin="round"/>
-<polygon points="418,250 440,256 455,243 473,229 490,228 505,232 509,226 522,224 535,228 548,236 566,236 584,238 596,246 612,261 618,272 621,280 640,296 660,318 684,334 684,420 560,420 548,400 535,383 528,372 517,350 500,346 480,336 457,340 442,318 430,290" fill="#CDEBF2" stroke="#F5D3C0" stroke-width="3" stroke-linejoin="round"/>
+<polygon points="-40,96 30,92 60,100 80,104 97,109 112,89 140,95 183,92 215,86 240,80 267,76 300,84 326,95 360,104 405,129 430,138 470,152 476,168 462,182 448,196 440,200 430,214 418,228 400,234 390,236 372,228 352,218 336,206 321,195 300,184 270,172 240,162 209,152 193,143 178,136 150,129 124,124 102,121 86,136 70,141 39,145 18,155 -40,165" fill="#CDEBF2" stroke="#F5D3C0" stroke-width="3" stroke-linejoin="round"/>
+<polygon points="418,250 440,256 455,243 473,229 490,228 505,232 509,226 522,224 535,228 548,236 566,236 584,238 596,246 612,261 618,272 621,280 640,296 660,318 684,334 688,300 684,262 680,222 676,190 671,169 684,150 720,150 720,440 565,440 560,420 548,400 535,383 528,372 517,350 500,346 480,336 457,340 442,318 430,290" fill="#CDEBF2" stroke="#F5D3C0" stroke-width="3" stroke-linejoin="round"/>
 <ellipse cx="544" cy="248" rx="12" ry="6" fill="#FFE6D6"/><ellipse cx="543" cy="317" rx="12" ry="8" fill="#FFE6D6"/>
-<polygon points="540,0 575,0 592,30 612,62 640,90 660,118 684,128 684,150 655,150 630,122 605,96 580,60 560,28" fill="#CDEBF2" stroke="#F5D3C0" stroke-width="3" stroke-linejoin="round"/>
+<polygon points="540,0 575,0 592,30 612,62 640,90 660,118 720,128 720,150 655,150 630,122 605,96 580,60 560,28" fill="#CDEBF2" stroke="#F5D3C0" stroke-width="3" stroke-linejoin="round"/>
 <ellipse cx="296" cy="226" rx="14" ry="4" fill="#FFE9B8"/><line x1="296" y1="214" x2="296" y2="226" stroke="#B88A6A" stroke-width="2"/><path d="M284 214 Q296 200 308 214 Z" fill="#FFB6C9"/>
 <polygon points="626,216 640,207 654,216" fill="#E7DAF7" stroke="#B79BDB"/><path d="M630 216v10M640 216v10M650 216v10" stroke="#B79BDB" stroke-width="3"/><rect x="624" y="226" width="32" height="4" fill="#E7DAF7" stroke="#B79BDB"/>
 <path d="M130 175l5-12 5 12zM148 182l5-12 5 12zM330 285l5-12 5 12zM200 235l5-12 5 12zM530 190l5-12 5 12z" fill="#BFE6D5"/>
@@ -76,13 +86,14 @@ h2{font-size:24px}p{font-size:17px}button{font-size:17px}.opts button{font-size:
 <g id="cl" transform="translate(54,676)"><circle r="15" fill="#F4C95D" stroke="#B8892B" stroke-width="2"/><circle r="10" fill="none" stroke="#E0A93A" stroke-width="1.5"/><circle r="4" fill="#D9A93C" stroke="#B8892B" stroke-width="1.5"/><path d="M-10 -6 A11 11 0 0 1 -3 -11" fill="none" stroke="#FFF3B8" stroke-width="2" stroke-linecap="round"/></g>
 <g id="cr" transform="translate(146,676)"><circle r="15" fill="#F4C95D" stroke="#B8892B" stroke-width="2"/><circle r="10" fill="none" stroke="#E0A93A" stroke-width="1.5"/><circle r="4" fill="#D9A93C" stroke="#B8892B" stroke-width="1.5"/><path d="M-10 -6 A11 11 0 0 1 -3 -11" fill="none" stroke="#FFF3B8" stroke-width="2" stroke-linecap="round"/></g>
 </g>
-<g id="bpos"><circle id="rg" r="24" fill="none" stroke="#F4C95D" stroke-width="3" opacity="0"/><g id="burst" opacity="0"><g id="rays" stroke="#E58BAE" stroke-width="2.5" stroke-linecap="round"></g><polygon id="st1" fill="#FFE066" stroke="#E58BAE" stroke-width="2.5" stroke-linejoin="round"/><polygon id="st2" fill="#FFF3B8"/><text id="bword" y="5" text-anchor="middle" style="font-size:13px;font-weight:900;fill:#C2476F">ΤΣΙΝ!</text></g></g></g><rect width="680" height="440" rx="14" fill="none" stroke="#F2B8CC" stroke-width="3"/></svg>
+<g id="bpos"><circle id="rg" r="24" fill="none" stroke="#F4C95D" stroke-width="3" opacity="0"/><g id="burst" opacity="0"><g id="rays" stroke="#E58BAE" stroke-width="2.5" stroke-linecap="round"></g><polygon id="st1" fill="#FFE066" stroke="#E58BAE" stroke-width="2.5" stroke-linejoin="round"/><polygon id="st2" fill="#FFF3B8"/><text id="bword" y="5" text-anchor="middle" style="font-size:13px;font-weight:900;fill:#C2476F">ΤΣΙΝ!</text></g></g></g><rect x="-40" width="760" height="440" rx="14" fill="none" stroke="#F2B8CC" stroke-width="3"/></svg>
 </div>
 <div id="panel"></div>
 <pre id="dbg"></pre>
 </div>
 <canvas id="fx"></canvas>
 <script src="config.js"></script>
+<script>window.addEventListener("error",function(e){if((e.filename||"").indexOf("texts.js")>-1)window.TEXTS_ERR=e.message+" (γραμμή "+e.lineno+")"})</script>
 <script src="texts.js"></script>
 <script>
 /* ====== ΡΥΘΜΙΣΕΙΣ — άλλαξε εδώ ====== */
@@ -91,7 +102,7 @@ const CFG={
  key:window.WEB3FORMS_KEY||"ΒΑΛΕ_ΕΔΩ_ΤΟ_KEY"   // το κλειδί μπαίνει στο αρχείο config.js
 };
 const T=window.TEXTS;   // όλα τα κείμενα είναι στο αρχείο texts.js
-if(!T){document.body.innerHTML="<p style='padding:24px'>Λείπει το αρχείο texts.js</p>";throw new Error("texts.js missing")}
+if(!T){document.body.innerHTML="<p style='padding:24px'>Λείπει ή έχει λάθος το αρχείο texts.js"+(window.TEXTS_ERR?"<br><small>"+window.TEXTS_ERR+"</small>":"")+"</p>";throw new Error("texts.js missing")}
 /* ==================================== */
 const $=id=>document.getElementById(id),S={att:[],fail:0,gift:null};
 const show=h=>{$("panel").innerHTML=h};
@@ -114,12 +125,12 @@ $("marks").innerHTML=[0,1,6,9,14].map(i=>`<circle cx="${P[i][0]}" cy="${P[i][1]}
 `<text class="lb2" x="230" y="118" text-anchor="middle">${T.sea[0]}</text><text class="lb2" x="505" y="300" text-anchor="middle">${T.sea[1]}</text>`;
 let ov=1,cam={x:340,y:220,w:680},cur=P[0];
 const cl=(v,a,b)=>Math.min(Math.max(v,Math.min(a,b)),Math.max(a,b));
-const setCam=()=>{const m=$("map");if(ov)cam.w=Math.max(700,660*m.clientWidth/(m.clientHeight||1));const h=cam.w*m.clientHeight/m.clientWidth,x=cl(cam.x,cam.w/2,680-cam.w/2),y=cl(cam.y,h/2,440-h/2);$("svg").setAttribute("viewBox",`${x-cam.w/2} ${y-h/2} ${cam.w} ${h}`)};
+const setCam=()=>{const m=$("map");if(ov)cam.w=Math.max(780,660*m.clientWidth/(m.clientHeight||1));const h=cam.w*m.clientHeight/m.clientWidth,x=cl(cam.x,cam.w/2-40,720-cam.w/2),y=cl(cam.y,h/2,440-h/2);$("svg").setAttribute("viewBox",`${x-cam.w/2} ${y-h/2} ${cam.w} ${h}`)};
 function fly(x,y,w,ms=900){const a={...cam},t0=performance.now();return new Promise(r=>{(function f(t){const k=Math.min(1,(t-t0)/ms),e=k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2;cam={x:a.x+(x-a.x)*e,y:a.y+(y-a.y)*e,w:a.w+(w-a.w)*e};setCam();k<1?requestAnimationFrame(f):r()})(t0)})}
 function place(d,bob=0){cur=at(d);$("mk").setAttribute("transform",`translate(${cur[0]-47.6},${cur[1]-360.3-bob}) scale(.476)`)}
 function walk(a,b,ms){return new Promise(r=>{const d0=L[a],d1=L[b],t0=performance.now();(function f(t){const k=Math.min(1,(t-t0)/ms);place(d0+(d1-d0)*k,Math.abs(Math.sin(k*ms/90))*2);cam.x=cur[0];cam.y=cur[1]-10;setCam();k<1?requestAnimationFrame(f):r()})(t0)})}
-function clap(){const t0=performance.now();(function f(t){const k=Math.min(1,(t-t0)/600),e=Math.abs(Math.sin(k*Math.PI*2));
- [["l",54,676,90,688],["r",146,676,110,688]].forEach(([s,a,b,c,d])=>{const x=a+(c-a)*e,y=b+(d-b)*e;$("c"+s).setAttribute("transform",`translate(${x},${y})`);const l=$("a"+s);l.setAttribute("x2",x);l.setAttribute("y2",y)});
+function clap(q=""){const t0=performance.now();(function f(t){const k=Math.min(1,(t-t0)/600),e=Math.abs(Math.sin(k*Math.PI*2));
+ [["l",54,676,90,688],["r",146,676,110,688]].forEach(([s,a,b,c,d])=>{const x=a+(c-a)*e,y=b+(d-b)*e;$("c"+s+q).setAttribute("transform",`translate(${x},${y})`);const l=$("a"+s+q);l.setAttribute("x2",x);l.setAttribute("y2",y)});
  if(k<1)requestAnimationFrame(f)})(t0)}
 function clang(w){clap();if(!w)return;$("bpos").setAttribute("transform",`translate(${cur[0]},${cur[1]-80})`);[$("burst"),$("rg")].forEach(e=>{e.classList.remove("go");void e.getBoundingClientRect();e.classList.add("go")})}
 const star=(a,b,n)=>Array.from({length:2*n},(_,i)=>{const t=Math.PI*i/n,r=i%2?b:a;return(Math.cos(t)*r).toFixed(1)+","+(Math.sin(t)*r).toFixed(1)}).join(" ");
@@ -127,14 +138,18 @@ $("bword").textContent=T.burstWord;$("ttl").textContent=T.mapTitle;$("sub").text
 $("rays").innerHTML=Array.from({length:12},(_,i)=>{const t=Math.PI*2*i/12;return`<line x1="${(Math.cos(t)*34).toFixed(1)}" y1="${(Math.sin(t)*34).toFixed(1)}" x2="${(Math.cos(t)*43).toFixed(1)}" y2="${(Math.sin(t)*43).toFixed(1)}"/>`}).join("");
 /* ---- ροή ---- */
 function intro(){
- show(`<h2>${T.introTitle}</h2><p>${T.introText}</p><div id="zone"><button id="yes" style="left:0;top:0">${T.yes}</button><button id="no" class="alt" style="left:60%;top:0">${T.no}</button></div>`);
+ const hl=document.createElement("div");hl.id="hello";
+ hl.innerHTML=`<div id="bub"><p>${T.helloText||"Έμαθα ότι έχεις γενέθλια, θα με βοηθήσεις να σου παραδώσω το γράμμα;"}</p><div id="zone"><button id="yes" style="left:0;top:0">${T.yes}</button><button id="no" class="alt" style="left:60%;top:0">${T.no}</button></div></div><svg id="hm" viewBox="30 622 170 144"></svg>`;
+ document.body.appendChild(hl);
+ const m=$("mk").cloneNode(true);m.removeAttribute("transform");m.removeAttribute("style");m.querySelectorAll("[id]").forEach(e=>e.id+="2");m.id="mk2";$("hm").appendChild(m);
+ const idle=setInterval(()=>clap("2"),2800);setTimeout(()=>clap("2"),900);
  const z=$("zone"),n=$("no"),y=$("yes");
  const run=e=>{e&&e.preventDefault();const zb=z.getBoundingClientRect(),yb=y.getBoundingClientRect(),w=n.offsetWidth,h=n.offsetHeight;let x,t,k=0;
   do{x=Math.random()*(z.clientWidth-w);t=Math.random()*(z.clientHeight-h);k++}while(k<25&&x+zb.left<yb.right+10&&x+w+zb.left>yb.left-10&&t+zb.top<yb.bottom+10&&t+h+zb.top>yb.top-10);
   n.style.left=x+"px";n.style.top=t+"px"};
  n.addEventListener("pointerenter",e=>{if(e.pointerType==="mouse")run(e)});
  n.addEventListener("pointerdown",run);n.addEventListener("click",e=>e.preventDefault());n.addEventListener("focus",()=>{run();n.blur()});
- y.onclick=async()=>{ov=0;show("<p>"+T.walk1+"</p>");await fly(95,125,170);await walk(0,1,1500);gate()}
+ y.onclick=async()=>{clearInterval(idle);hl.classList.add("out");setTimeout(()=>hl.remove(),700);show("<p>"+T.walk1+"</p>");await new Promise(r=>setTimeout(r,1300));ov=0;await fly(95,125,170);await walk(0,1,1500);gate()}
 }
 function gate(){
  const g=T.gate;
@@ -156,11 +171,9 @@ function stop2(){
  const sl=$("sl");sl.oninput=()=>{const v=sl.value/100;$("lift").setAttribute("transform",`rotate(${-70*(1-v)} 406 239)`);
   if(v===1&&!sl.dataset.d){sl.dataset.d=1;sl.disabled=true;$("nx2").innerHTML=`<button id="c2">${T.next}</button>`;$("c2").onclick=async()=>{show("<p>"+T.walk4+"</p>");await walk(9,14,5000);arrive()}}};
 }
-function arrive(){
- show(`<h2>${T.arriveTitle}</h2><p>${T.arriveText}</p><button id="op">${T.openLetter}</button>`);$("op").onclick=letter;
-}
+function arrive(){letter()}
 function letter(){
- show(`<h2>${T.letterTitle}</h2><p>${T.letter}</p><p><b>${T.pickGift}</b></p><div class="opts g">${T.gifts.map((g,i)=>`<button data-g="${i}">${g[0]} ${g[1]}</button>`).join("")}</div>`);
+ show(`<h2>${T.arriveTitle}</h2><p>${T.arriveText}</p><p><b>${T.pickGift}</b></p><div class="opts g">${T.gifts.map((g,i)=>`<button data-g="${i}">${g[0]} ${g[1]}</button>`).join("")}</div>`);
  document.querySelectorAll("[data-g]").forEach(b=>b.onclick=()=>{S.gift=+b.dataset.g;S.opt=null;detail()});
 }
 function detail(){
@@ -172,8 +185,12 @@ function detail(){
  $("bk").onclick=letter;
  $("snd").onclick=async()=>{const b=$("snd");b.disabled=true;b.textContent=T.sending;
   const ok=await send(T.mailDone,{gift:g[1],gift_option:g[2][S.opt],coupon_email:cp?$("em").value.trim():"-",gate_attempts:S.att.join(" | ")});
-  if(ok)finale();
+  if(ok)ready();
   else{b.disabled=false;b.textContent=T.send;$("err").textContent=T.sendFail}};
+}
+function ready(){
+ show(`<h2>${T.sentTitle||"Τέλεια επιλογή! 🎁"}</h2><p>${T.sentText||"Το μαϊμουδάκι έχει ένα τελευταίο πράγμα να σου παραδώσει: το γράμμα."}</p><button id="op">${T.openLetter}</button>`);
+ $("op").onclick=finale;
 }
 /* ---- φινάλε ---- */
 const fx=$("fx"),g2=fx.getContext("2d"),CL=["#E58BAE","#F4C95D","#BFE6D5","#CDB8F0","#FFB6C9","#9ED4E0"],R=Math.random;let ps=[],on=0;
