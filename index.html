@@ -43,6 +43,21 @@ input[type=range]{width:100%;accent-color:var(--pink);height:40px}
 @keyframes rise{from{transform:translateY(40px);opacity:0}}
 @keyframes bob{50%{transform:translateY(-6px)}}
 #panel p,#panel h2,#bub p{white-space:pre-line}
+#end{position:fixed;inset:0;z-index:7;overflow-y:auto;display:flex;flex-direction:column;align-items:center;padding:24px 16px 32px;background:radial-gradient(circle at 18% 14%,#F8D7E3 0,transparent 45%),radial-gradient(circle at 86% 86%,#E7DAF7 0,transparent 45%),radial-gradient(circle at 86% 12%,#D8F0E3 0,transparent 35%),#FFF3E8}
+.env{width:min(92vw,440px);margin-top:auto;animation:rise .8s both}
+.flap{height:112px;background:#D98BA8;clip-path:polygon(0 100%,50% 0,100% 100%);position:relative}
+.flap::after{content:"";position:absolute;inset:0;background:#fff;clip-path:polygon(4% 100%,50% 12%,96% 100%)}
+.ebody{position:relative;background:#fff;border:3px solid #D98BA8;border-radius:0 0 24px 24px;padding:16px 16px 0;overflow:hidden}
+.paper{background:#FFF8EF;border:2px solid #F3E2D2;border-bottom:0;border-radius:14px 14px 0 0;padding:22px 20px 112px;box-shadow:0 -2px 10px #0001;animation:slide 1s .5s cubic-bezier(.2,.9,.3,1) both}
+.pocket{position:absolute;left:0;right:0;bottom:0;height:100px;background:#D98BA8;clip-path:polygon(0 0,50% 52%,100% 0,100% 100%,0 100%)}
+.pocket::after{content:"";position:absolute;inset:0;background:#fff;clip-path:polygon(0 4px,50% calc(52% + 5px),100% 4px,100% 100%,0 100%)}
+.pocket::before{content:"♥";position:absolute;left:50%;top:62px;transform:translateX(-50%);color:#F2849F;font-size:26px;line-height:1;z-index:2}
+#end .big{font-size:clamp(26px,8vw,30px);margin-bottom:12px}
+.wt{font:17px/1.55 Georgia,"Times New Roman",serif;white-space:pre-line;text-align:left;color:#5B3F57}
+#end .sg{margin-top:12px}
+#hm3{width:min(40vw,150px);margin-top:18px;overflow:visible}
+#end button{margin:14px 0 auto}
+@keyframes slide{from{transform:translateY(90px);opacity:0}}
 @media (min-width:900px){
 body{min-height:100dvh;display:grid;place-items:center;background:radial-gradient(circle at 12% 18%,#F8D7E3 0,transparent 38%),radial-gradient(circle at 88% 84%,#E7DAF7 0,transparent 40%),radial-gradient(circle at 86% 12%,#D8F0E3 0,transparent 28%),var(--cream)}
 #app{width:100%;max-width:1120px;height:min(100dvh,780px);padding:32px;flex-direction:row;gap:26px;align-items:stretch}
@@ -73,7 +88,7 @@ h2{font-size:24px}p{font-size:17px}button{font-size:17px}.opts button{font-size:
 <path d="M126 735 Q164 748 162 716 Q160 700 148 704" fill="none" stroke="#C98F6B" stroke-width="7" stroke-linecap="round"/>
 <ellipse cx="88" cy="748" rx="14" ry="9" fill="#C98F6B"/><ellipse cx="114" cy="748" rx="14" ry="9" fill="#C98F6B"/>
 <ellipse cx="100" cy="712" rx="28" ry="34" fill="#F7B6C8" stroke="#7A4E3A" stroke-width="2"/>
-<g transform="rotate(-12 116 712)"><rect x="102" y="699" width="28" height="19" rx="2" fill="#fff" stroke="#D98BA8" stroke-width="1.5"/><path d="M102 699 L116 710 L130 699" fill="none" stroke="#D98BA8" stroke-width="1.5"/><path d="M116 716 l-3.5 -3.5 a2.2 2.2 0 0 1 3.5 -2.6 a2.2 2.2 0 0 1 3.5 2.6 z" fill="#F2849F"/></g>
+<g id="ltr" transform="rotate(-12 116 712)"><rect x="102" y="699" width="28" height="19" rx="2" fill="#fff" stroke="#D98BA8" stroke-width="1.5"/><path d="M102 699 L116 710 L130 699" fill="none" stroke="#D98BA8" stroke-width="1.5"/><path d="M116 716 l-3.5 -3.5 a2.2 2.2 0 0 1 3.5 -2.6 a2.2 2.2 0 0 1 3.5 2.6 z" fill="#F2849F"/></g>
 <rect x="106" y="717" width="22" height="15" rx="3" fill="#EFA0B8" stroke="#D98BA8" stroke-width="1.5"/><path d="M109 721h16" stroke="#D98BA8" stroke-dasharray="2 2"/>
 <line id="al" x1="78" y1="702" x2="54" y2="676" stroke="#C98F6B" stroke-width="11" stroke-linecap="round"/><line id="ar" x1="124" y1="698" x2="146" y2="676" stroke="#C98F6B" stroke-width="11" stroke-linecap="round"/>
 <circle cx="68" cy="650" r="12" fill="#C98F6B"/><circle cx="132" cy="650" r="12" fill="#C98F6B"/>
@@ -142,14 +157,13 @@ function intro(){
  hl.innerHTML=`<div id="bub"><p>${T.helloText||"Έμαθα ότι έχεις γενέθλια, θα με βοηθήσεις να σου παραδώσω το γράμμα;"}</p><div id="zone"><button id="yes" style="left:0;top:0">${T.yes}</button><button id="no" class="alt" style="left:60%;top:0">${T.no}</button></div></div><svg id="hm" viewBox="30 622 170 144"></svg>`;
  document.body.appendChild(hl);
  const m=$("mk").cloneNode(true);m.removeAttribute("transform");m.removeAttribute("style");m.querySelectorAll("[id]").forEach(e=>e.id+="2");m.id="mk2";$("hm").appendChild(m);
- const idle=setInterval(()=>clap("2"),2800);setTimeout(()=>clap("2"),900);
  const z=$("zone"),n=$("no"),y=$("yes");
  const run=e=>{e&&e.preventDefault();const zb=z.getBoundingClientRect(),yb=y.getBoundingClientRect(),w=n.offsetWidth,h=n.offsetHeight;let x,t,k=0;
   do{x=Math.random()*(z.clientWidth-w);t=Math.random()*(z.clientHeight-h);k++}while(k<25&&x+zb.left<yb.right+10&&x+w+zb.left>yb.left-10&&t+zb.top<yb.bottom+10&&t+h+zb.top>yb.top-10);
   n.style.left=x+"px";n.style.top=t+"px"};
  n.addEventListener("pointerenter",e=>{if(e.pointerType==="mouse")run(e)});
  n.addEventListener("pointerdown",run);n.addEventListener("click",e=>e.preventDefault());n.addEventListener("focus",()=>{run();n.blur()});
- y.onclick=async()=>{clearInterval(idle);hl.classList.add("out");setTimeout(()=>hl.remove(),700);show("<p>"+T.walk1+"</p>");await new Promise(r=>setTimeout(r,1300));ov=0;await fly(95,125,170);await walk(0,1,1500);gate()}
+ y.onclick=async()=>{hl.classList.add("out");setTimeout(()=>hl.remove(),700);show("<p>"+T.walk1+"</p>");await new Promise(r=>setTimeout(r,1300));ov=0;await fly(95,125,170);await walk(0,1,1500);gate()}
 }
 function gate(){
  const g=T.gate;
@@ -202,10 +216,12 @@ const confetti=n=>add(Array.from({length:n},()=>({x:R()*innerWidth,y:-20-R()*200
 const firework=(x,y)=>{const c=CL[R()*6|0];add(Array.from({length:46},()=>{const a=R()*6.283,v=1.5+R()*4;return{x,y,vx:Math.cos(a)*v,vy:Math.sin(a)*v,g:.06,w:4,h:4,r:0,vr:0,l:70,c}}))};
 async function finale(){
  const F=T.finale;
- $("map").insertAdjacentHTML("beforeend",`<div id="fin"><div class="big">${F.title}${F.name?", "+F.name:""}!</div></div>`);
- $("panel").classList.add("fin");show(`<h2>🎉 ${F.head}</h2><div class="wish">${F.wish}${F.sign?`<div class="sg">${F.sign}</div>`:""}</div><button id="enc">${T.again}</button>`);
- const party=()=>{[0,700,1400].forEach(t=>setTimeout(clang,t));confetti(140);[0,350,700,1050,1400].forEach(t=>setTimeout(()=>firework(innerWidth*(.15+R()*.7),innerHeight*(.1+R()*.3)),t));setTimeout(()=>confetti(100),900)};
- $("enc").onclick=party;await fly(cur[0],cur[1]-10,150,1200);party();
+ const e=document.createElement("div");e.id="end";
+ e.innerHTML=`<div class="env"><div class="flap"></div><div class="ebody"><div class="paper"><div class="big">${F.title}${F.name?", "+F.name:""}!</div><div class="wt">${F.wish}</div>${F.sign?`<div class="sg">${F.sign}</div>`:""}</div><div class="pocket"></div></div></div><svg id="hm3" viewBox="30 622 170 144"></svg><button id="enc">${T.again}</button>`;
+ document.body.appendChild(e);
+ const m=$("mk").cloneNode(true);m.removeAttribute("transform");m.removeAttribute("style");m.querySelector("#ltr").remove();m.querySelectorAll("[id]").forEach(x=>x.id+="3");m.id="mk3";$("hm3").appendChild(m);
+ const party=()=>{[0,700,1400].forEach(t=>setTimeout(()=>clap("3"),t));confetti(140);[0,350,700,1050,1400].forEach(t=>setTimeout(()=>firework(innerWidth*(.15+R()*.7),innerHeight*(.1+R()*.3)),t));setTimeout(()=>confetti(100),900)};
+ $("enc").onclick=party;party();
 }
 addEventListener("resize",setCam);if(window.ResizeObserver)new ResizeObserver(setCam).observe($("map"));setCam();place(0);intro();
 </script></body></html>
