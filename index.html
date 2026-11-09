@@ -1,227 +1,1138 @@
 <!doctype html>
-<html lang="el"><head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Ένα γράμμα για σένα</title>
-<style>
-:root{--cream:#FFF3E8;--pink:#E58BAE;--ink:#6B4A66;--soft:#F8D7E3}
-*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{margin:0;background:var(--cream);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
-#app{max-width:480px;margin:0 auto;height:100dvh;display:flex;flex-direction:column;padding-top:env(safe-area-inset-top)}
-#map{position:relative;flex:1;min-height:0;background:var(--cream);overflow:hidden}
-#map svg{width:100%;height:100%;display:block}
-#panel{flex:none;max-height:44dvh;overflow:auto;background:#fff;border-radius:22px 22px 0 0;margin-top:-18px;position:relative;z-index:1;padding:14px 16px calc(14px + env(safe-area-inset-bottom));box-shadow:0 -6px 20px #e58bae22}
-h2{margin:0 0 6px;font-size:18px}p{margin:0 0 10px;line-height:1.4;font-size:15px}
-button{font:inherit;font-weight:600;border:0;border-radius:999px;padding:10px 20px;min-height:44px;background:var(--pink);color:#fff;cursor:pointer}
-button:disabled{opacity:.45}
-button.alt{background:var(--soft);color:var(--ink)}
-.opts{display:grid;gap:8px}.opts.g{grid-template-columns:1fr 1fr}.opts button{background:var(--soft);color:var(--ink);text-align:left;border-radius:16px;padding:9px 12px;font-size:14px}
-.opts button.sel{background:var(--pink);color:#fff}
-input[type=email]{width:100%;font:inherit;padding:12px 14px;border:2px solid var(--soft);border-radius:14px;margin:0 0 10px}
-input[type=range]{width:100%;accent-color:var(--pink);height:40px}
-#zone{position:relative;height:84px}#zone button{position:absolute}
-#dbg{display:none;white-space:pre-wrap;font:11px monospace;background:#f6f0f8;padding:8px;margin:0}
-.lb{font-size:18px;font-weight:500;fill:#6B4A66;paint-order:stroke;stroke:#fff;stroke-width:4px;stroke-linejoin:round}
-.lb2{font-size:13px;font-style:italic;fill:#6FAEC0}
-#fx{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:9}
-#fin{position:absolute;inset:0;overflow:hidden;pointer-events:none;text-align:center;padding-top:7%}
-.big{display:inline-block;max-width:92%;font-size:clamp(30px,9vw,64px);line-height:1.05;font-weight:900;background:linear-gradient(90deg,#E58BAE,#F4A261,#9B72CF);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 3px #fff) drop-shadow(0 3px 0 #fff);animation:zoom .9s cubic-bezier(.2,1.4,.4,1) both}
-@keyframes zoom{from{transform:scale(.2);opacity:0}}
-#panel.fin{max-height:56dvh}
-.wish{background:#FFF8EF;border:2px solid #F8D7E3;border-radius:16px;padding:14px 16px;margin:0 0 10px;font:17px/1.55 Georgia,"Times New Roman",serif;white-space:pre-line;animation:fade 1.2s .8s both}
-.sg{margin-top:10px;text-align:right;font-style:italic;color:#9B7A96}
-@keyframes fade{from{opacity:0;transform:translateY(8px)}}
-@keyframes boom{0%{transform:scale(.2) rotate(-25deg);opacity:0}25%{opacity:1}45%{transform:scale(1.25) rotate(6deg)}70%{transform:scale(1) rotate(-3deg);opacity:1}100%{transform:scale(1.1) rotate(0);opacity:0}}
-@keyframes ring{0%{transform:scale(.4);opacity:.9}100%{transform:scale(2.6);opacity:0}}
-#burst.go{animation:boom .9s ease-out both}#rg.go{animation:ring .8s ease-out both}
-#hello{position:fixed;inset:0;z-index:8;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;background:radial-gradient(circle at 18% 14%,#F8D7E3 0,transparent 45%),radial-gradient(circle at 86% 86%,#E7DAF7 0,transparent 45%),radial-gradient(circle at 86% 12%,#D8F0E3 0,transparent 35%),#FFF3E8}
-#hello.out{opacity:0;transition:opacity .6s;pointer-events:none}
-#bub{position:relative;width:100%;max-width:440px;box-sizing:border-box;background:#fff;border:4px solid #F2B8CC;border-radius:30px;padding:22px 22px 14px;text-align:center;box-shadow:0 10px 30px #e58bae33;animation:zoom .7s .35s cubic-bezier(.2,1.4,.4,1) both}
-#bub::before{content:"";position:absolute;left:50%;bottom:-27px;margin-left:-20px;border:20px solid transparent;border-top:24px solid #F2B8CC;border-bottom:0}
-#bub::after{content:"";position:absolute;left:50%;bottom:-19px;margin-left:-16px;border:16px solid transparent;border-top:20px solid #fff;border-bottom:0}
-#bub p{font-size:clamp(18px,4.6vw,23px);line-height:1.35;font-weight:700;margin:0 0 14px}
-#hm{width:min(72vw,300px,34vh);height:auto;margin-top:34px;overflow:visible;animation:rise .8s both,bob 2.4s ease-in-out .9s infinite}
-@keyframes rise{from{transform:translateY(40px);opacity:0}}
-@keyframes bob{50%{transform:translateY(-6px)}}
-#panel p,#panel h2,#bub p{white-space:pre-line}
-#end{position:fixed;inset:0;z-index:7;overflow-y:auto;display:flex;flex-direction:column;align-items:center;padding:24px 16px 32px;background:radial-gradient(circle at 18% 14%,#F8D7E3 0,transparent 45%),radial-gradient(circle at 86% 86%,#E7DAF7 0,transparent 45%),radial-gradient(circle at 86% 12%,#D8F0E3 0,transparent 35%),#FFF3E8}
-.env{width:min(92vw,440px);margin-top:auto;animation:rise .8s both}
-.flap{height:112px;background:#D98BA8;clip-path:polygon(0 100%,50% 0,100% 100%);position:relative}
-.flap::after{content:"";position:absolute;inset:0;background:#fff;clip-path:polygon(4% 100%,50% 12%,96% 100%)}
-.ebody{position:relative;background:#fff;border:3px solid #D98BA8;border-radius:0 0 24px 24px;padding:16px 16px 0;overflow:hidden}
-.paper{background:#FFF8EF;border:2px solid #F3E2D2;border-bottom:0;border-radius:14px 14px 0 0;padding:22px 20px 112px;box-shadow:0 -2px 10px #0001;animation:slide 1s .5s cubic-bezier(.2,.9,.3,1) both}
-.pocket{position:absolute;left:0;right:0;bottom:0;height:100px;background:#D98BA8;clip-path:polygon(0 0,50% 52%,100% 0,100% 100%,0 100%)}
-.pocket::after{content:"";position:absolute;inset:0;background:#fff;clip-path:polygon(0 4px,50% calc(52% + 5px),100% 4px,100% 100%,0 100%)}
-.pocket::before{content:"♥";position:absolute;left:50%;top:62px;transform:translateX(-50%);color:#F2849F;font-size:26px;line-height:1;z-index:2}
-#end .big{font-size:clamp(26px,8vw,30px);margin-bottom:12px}
-.wt{font:17px/1.55 Georgia,"Times New Roman",serif;white-space:pre-line;text-align:left;color:#5B3F57}
-#end .sg{margin-top:12px}
-#hm3{width:min(40vw,150px);margin-top:18px;overflow:visible}
-#end button{margin:14px 0 auto}
-@keyframes slide{from{transform:translateY(90px);opacity:0}}
-@media (min-width:900px){
-body{min-height:100dvh;display:grid;place-items:center;background:radial-gradient(circle at 12% 18%,#F8D7E3 0,transparent 38%),radial-gradient(circle at 88% 84%,#E7DAF7 0,transparent 40%),radial-gradient(circle at 86% 12%,#D8F0E3 0,transparent 28%),var(--cream)}
-#app{width:100%;max-width:1120px;height:min(100dvh,780px);padding:32px;flex-direction:row;gap:26px;align-items:stretch}
-#map{min-width:0;border-radius:26px;border:6px solid #fff;box-shadow:0 14px 44px #b07a9a33}
-#panel{flex:none;width:380px;align-self:center;max-height:100%;margin:0;padding:26px 24px;border-radius:26px;box-shadow:0 14px 44px #b07a9a33}
-#panel.fin{max-height:100%}
-h2{font-size:24px}p{font-size:17px}button{font-size:17px}.opts button{font-size:16px}
-}
-</style></head><body>
-<div id="app">
-<div id="map"><svg id="svg" xmlns="http://www.w3.org/2000/svg">
-<defs><clipPath id="sh"><rect x="-40" width="760" height="440" rx="14"/></clipPath></defs><text id="ttl" x="340" y="-72" text-anchor="middle" style="font-size:34px;font-weight:700;fill:#6B4A66"></text><text id="sub" x="340" y="-36" text-anchor="middle" style="font-size:18px;fill:#9B7A96"></text><g clip-path="url(#sh)"><rect x="-40" width="760" height="440" fill="#FFE6D6"/>
-<path d="M300 60 q30 -34 60 0 z" fill="#D8F0E3"/><path d="M450 70 q35 -40 70 0 z" fill="#F8D7E3"/><path d="M190 300 q30 -34 60 0 z" fill="#E7DAF7"/><path d="M250 340 q35 -40 70 0 z" fill="#D8F0E3"/><path d="M540 140 q30 -34 60 0 z" fill="#F8D7E3"/>
-<polygon points="-40,96 30,92 60,100 80,104 97,109 112,89 140,95 183,92 215,86 240,80 267,76 300,84 326,95 360,104 405,129 430,138 470,152 476,168 462,182 448,196 440,200 430,214 418,228 400,234 390,236 372,228 352,218 336,206 321,195 300,184 270,172 240,162 209,152 193,143 178,136 150,129 124,124 102,121 86,136 70,141 39,145 18,155 -40,165" fill="#CDEBF2" stroke="#F5D3C0" stroke-width="3" stroke-linejoin="round"/>
-<polygon points="418,250 440,256 455,243 473,229 490,228 505,232 509,226 522,224 535,228 548,236 566,236 584,238 596,246 612,261 618,272 621,280 640,296 660,318 684,334 688,300 684,262 680,222 676,190 671,169 684,150 720,150 720,440 565,440 560,420 548,400 535,383 528,372 517,350 500,346 480,336 457,340 442,318 430,290" fill="#CDEBF2" stroke="#F5D3C0" stroke-width="3" stroke-linejoin="round"/>
-<ellipse cx="544" cy="248" rx="12" ry="6" fill="#FFE6D6"/><ellipse cx="543" cy="317" rx="12" ry="8" fill="#FFE6D6"/>
-<polygon points="540,0 575,0 592,30 612,62 640,90 660,118 720,128 720,150 655,150 630,122 605,96 580,60 560,28" fill="#CDEBF2" stroke="#F5D3C0" stroke-width="3" stroke-linejoin="round"/>
-<ellipse cx="296" cy="226" rx="14" ry="4" fill="#FFE9B8"/><line x1="296" y1="214" x2="296" y2="226" stroke="#B88A6A" stroke-width="2"/><path d="M284 214 Q296 200 308 214 Z" fill="#FFB6C9"/>
-<polygon points="626,216 640,207 654,216" fill="#E7DAF7" stroke="#B79BDB"/><path d="M630 216v10M640 216v10M650 216v10" stroke="#B79BDB" stroke-width="3"/><rect x="624" y="226" width="32" height="4" fill="#E7DAF7" stroke="#B79BDB"/>
-<path d="M130 175l5-12 5 12zM148 182l5-12 5 12zM330 285l5-12 5 12zM200 235l5-12 5 12zM530 190l5-12 5 12z" fill="#BFE6D5"/>
-<rect x="412" y="228" width="4" height="22" fill="#F5D3C0"/><rect x="420" y="228" width="4" height="22" fill="#F5D3C0"/>
-<rect x="416" y="228" width="4" height="22" fill="#CDEBF2"/>
-<line x1="97" y1="108" x2="103" y2="124" stroke="#F29AB8" stroke-width="4" stroke-linecap="round"/>
-<g id="lift" transform="rotate(-70 406 239)"><line x1="406" y1="239" x2="430" y2="239" stroke="#F29AB8" stroke-width="3" stroke-linecap="round"/></g>
-<polyline id="route" fill="none" stroke="#E58BAE" stroke-width="4" stroke-dasharray="1 9" stroke-linecap="round" stroke-linejoin="round"/>
-<g id="marks"></g>
-<g id="mk" style="cursor:pointer">
-<path d="M126 735 Q164 748 162 716 Q160 700 148 704" fill="none" stroke="#C98F6B" stroke-width="7" stroke-linecap="round"/>
-<ellipse cx="88" cy="748" rx="14" ry="9" fill="#C98F6B"/><ellipse cx="114" cy="748" rx="14" ry="9" fill="#C98F6B"/>
-<ellipse cx="100" cy="712" rx="28" ry="34" fill="#F7B6C8" stroke="#7A4E3A" stroke-width="2"/>
-<g id="ltr" transform="rotate(-12 116 712)"><rect x="102" y="699" width="28" height="19" rx="2" fill="#fff" stroke="#D98BA8" stroke-width="1.5"/><path d="M102 699 L116 710 L130 699" fill="none" stroke="#D98BA8" stroke-width="1.5"/><path d="M116 716 l-3.5 -3.5 a2.2 2.2 0 0 1 3.5 -2.6 a2.2 2.2 0 0 1 3.5 2.6 z" fill="#F2849F"/></g>
-<rect x="106" y="717" width="22" height="15" rx="3" fill="#EFA0B8" stroke="#D98BA8" stroke-width="1.5"/><path d="M109 721h16" stroke="#D98BA8" stroke-dasharray="2 2"/>
-<line id="al" x1="78" y1="702" x2="54" y2="676" stroke="#C98F6B" stroke-width="11" stroke-linecap="round"/><line id="ar" x1="124" y1="698" x2="146" y2="676" stroke="#C98F6B" stroke-width="11" stroke-linecap="round"/>
-<circle cx="68" cy="650" r="12" fill="#C98F6B"/><circle cx="132" cy="650" r="12" fill="#C98F6B"/>
-<circle cx="68" cy="650" r="6" fill="#F3D2B3"/><circle cx="132" cy="650" r="6" fill="#F3D2B3"/>
-<circle cx="100" cy="655" r="30" fill="#C98F6B"/><ellipse cx="100" cy="662" rx="21" ry="18" fill="#F3D2B3"/>
-<circle cx="91" cy="655" r="3.2" fill="#4A3328"/><circle cx="109" cy="655" r="3.2" fill="#4A3328"/>
-<ellipse cx="100" cy="666" rx="6" ry="4" fill="#E9B896"/>
-<path d="M93 672 Q100 678 107 672" fill="none" stroke="#4A3328" stroke-width="2" stroke-linecap="round"/>
-<circle cx="86" cy="668" r="4" fill="#F7B6C8" opacity=".8"/><circle cx="114" cy="668" r="4" fill="#F7B6C8" opacity=".8"/>
-<g id="cl" transform="translate(54,676)"><circle r="15" fill="#F4C95D" stroke="#B8892B" stroke-width="2"/><circle r="10" fill="none" stroke="#E0A93A" stroke-width="1.5"/><circle r="4" fill="#D9A93C" stroke="#B8892B" stroke-width="1.5"/><path d="M-10 -6 A11 11 0 0 1 -3 -11" fill="none" stroke="#FFF3B8" stroke-width="2" stroke-linecap="round"/></g>
-<g id="cr" transform="translate(146,676)"><circle r="15" fill="#F4C95D" stroke="#B8892B" stroke-width="2"/><circle r="10" fill="none" stroke="#E0A93A" stroke-width="1.5"/><circle r="4" fill="#D9A93C" stroke="#B8892B" stroke-width="1.5"/><path d="M-10 -6 A11 11 0 0 1 -3 -11" fill="none" stroke="#FFF3B8" stroke-width="2" stroke-linecap="round"/></g>
-</g>
-<g id="bpos"><circle id="rg" r="24" fill="none" stroke="#F4C95D" stroke-width="3" opacity="0"/><g id="burst" opacity="0"><g id="rays" stroke="#E58BAE" stroke-width="2.5" stroke-linecap="round"></g><polygon id="st1" fill="#FFE066" stroke="#E58BAE" stroke-width="2.5" stroke-linejoin="round"/><polygon id="st2" fill="#FFF3B8"/><text id="bword" y="5" text-anchor="middle" style="font-size:13px;font-weight:900;fill:#C2476F">ΤΣΙΝ!</text></g></g></g><rect x="-40" width="760" height="440" rx="14" fill="none" stroke="#F2B8CC" stroke-width="3"/></svg>
-</div>
-<div id="panel"></div>
-<pre id="dbg"></pre>
-</div>
-<canvas id="fx"></canvas>
-<script src="config.js"></script>
-<script>window.addEventListener("error",function(e){if((e.filename||"").indexOf("texts.js")>-1)window.TEXTS_ERR=e.message+" (γραμμή "+e.lineno+")"})</script>
-<script src="texts.js"></script>
-<script>
-/* ====== ΡΥΘΜΙΣΕΙΣ — άλλαξε εδώ ====== */
-const CFG={
- endpoint:"https://api.web3forms.com/submit",
- key:window.WEB3FORMS_KEY||"ΒΑΛΕ_ΕΔΩ_ΤΟ_KEY"   // το κλειδί μπαίνει στο αρχείο config.js
-};
-const T=window.TEXTS;   // όλα τα κείμενα είναι στο αρχείο texts.js
-if(!T){document.body.innerHTML="<p style='padding:24px'>Λείπει ή έχει λάθος το αρχείο texts.js"+(window.TEXTS_ERR?"<br><small>"+window.TEXTS_ERR+"</small>":"")+"</p>";throw new Error("texts.js missing")}
-/* ==================================== */
-const $=id=>document.getElementById(id),S={att:[],fail:0,gift:null};
-const show=h=>{$("panel").innerHTML=h};
-const dbg=t=>{const d=$("dbg");d.style.display="block";d.textContent+=t+"\n\n"};
-let vid="?",visits=1;
-try{vid=localStorage.vid||(localStorage.vid=(crypto.randomUUID?crypto.randomUUID():Math.random().toString(36).slice(2)));visits=(+localStorage.visits||0)+1;localStorage.visits=visits}catch(e){}
-const info=()=>{const n=navigator,s=screen;return{visitor_id:vid,visit_no:visits,time:new Date().toString(),timezone:Intl.DateTimeFormat().resolvedOptions().timeZone,languages:(n.languages||[n.language]).join(","),user_agent:n.userAgent,platform:n.platform,screen:s.width+"x"+s.height+" @"+devicePixelRatio+"x",viewport:innerWidth+"x"+innerHeight,touch_points:n.maxTouchPoints,referrer:document.referrer||"-"}};
-async function send(title,extra){
- const d={...extra,...info()},p={access_key:CFG.key,subject:T.mailSubject+" – "+title,from_name:"Γράμμα γενεθλίων",message:Object.entries(d).map(([k,v])=>k+": "+v).join("\n")};
- if(CFG.key.startsWith("ΒΑΛΕ")){dbg("[ΔΟΚΙΜΗ] "+p.subject+"\n"+p.message);return true}
- try{const r=await fetch(CFG.endpoint,{method:"POST",headers:{"Content-Type":"application/json",Accept:"application/json"},body:JSON.stringify(p)});const j=await r.json().catch(()=>({}));return r.ok&&j.success!==false}catch(e){return false}
-}
-/* ---- χάρτης, κάμερα, μαϊμού ---- */
-const P=[[86,136],[104,128],[140,136],[178,142],[209,158],[260,181],[321,201],[352,224],[390,242],[418,240],[440,232],[473,222],[509,218],[559,206],[608,225]];
-const L=[0];for(let i=1;i<P.length;i++)L[i]=L[i-1]+Math.hypot(P[i][0]-P[i-1][0],P[i][1]-P[i-1][1]);
-const at=d=>{let i=1;while(i<P.length-1&&L[i]<d)i++;const k=(d-L[i-1])/(L[i]-L[i-1]);return[P[i-1][0]+(P[i][0]-P[i-1][0])*k,P[i-1][1]+(P[i][1]-P[i-1][1])*k]};
-$("route").setAttribute("points",P.join(" "));
-$("marks").innerHTML=[0,1,6,9,14].map(i=>`<circle cx="${P[i][0]}" cy="${P[i][1]}" r="${i<2?8:9}" fill="#fff" stroke="#E58BAE" stroke-width="4"/>`).join("")+
-[[86,160,T.map[0],"middle"],[100,76,T.map[1],"middle"],[332,170,T.map[2],"middle"],[420,268,T.map[3],"end"],[608,200,T.map[4],"middle"]].map(a=>`<text class="lb" x="${a[0]}" y="${a[1]}" text-anchor="${a[3]}">${a[2]}</text>`).join("")+
-`<text class="lb2" x="230" y="118" text-anchor="middle">${T.sea[0]}</text><text class="lb2" x="505" y="300" text-anchor="middle">${T.sea[1]}</text>`;
-let ov=1,cam={x:340,y:220,w:680},cur=P[0];
-const cl=(v,a,b)=>Math.min(Math.max(v,Math.min(a,b)),Math.max(a,b));
-const setCam=()=>{const m=$("map");if(ov)cam.w=Math.max(780,660*m.clientWidth/(m.clientHeight||1));const h=cam.w*m.clientHeight/m.clientWidth,x=cl(cam.x,cam.w/2-40,720-cam.w/2),y=cl(cam.y,h/2,440-h/2);$("svg").setAttribute("viewBox",`${x-cam.w/2} ${y-h/2} ${cam.w} ${h}`)};
-function fly(x,y,w,ms=900){const a={...cam},t0=performance.now();return new Promise(r=>{(function f(t){const k=Math.min(1,(t-t0)/ms),e=k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2;cam={x:a.x+(x-a.x)*e,y:a.y+(y-a.y)*e,w:a.w+(w-a.w)*e};setCam();k<1?requestAnimationFrame(f):r()})(t0)})}
-function place(d,bob=0){cur=at(d);$("mk").setAttribute("transform",`translate(${cur[0]-47.6},${cur[1]-360.3-bob}) scale(.476)`)}
-function walk(a,b,ms){return new Promise(r=>{const d0=L[a],d1=L[b],t0=performance.now();(function f(t){const k=Math.min(1,(t-t0)/ms);place(d0+(d1-d0)*k,Math.abs(Math.sin(k*ms/90))*2);cam.x=cur[0];cam.y=cur[1]-10;setCam();k<1?requestAnimationFrame(f):r()})(t0)})}
-function clap(q=""){const t0=performance.now();(function f(t){const k=Math.min(1,(t-t0)/600),e=Math.abs(Math.sin(k*Math.PI*2));
- [["l",54,676,90,688],["r",146,676,110,688]].forEach(([s,a,b,c,d])=>{const x=a+(c-a)*e,y=b+(d-b)*e;$("c"+s+q).setAttribute("transform",`translate(${x},${y})`);const l=$("a"+s+q);l.setAttribute("x2",x);l.setAttribute("y2",y)});
- if(k<1)requestAnimationFrame(f)})(t0)}
-function clang(w){clap();if(!w)return;$("bpos").setAttribute("transform",`translate(${cur[0]},${cur[1]-80})`);[$("burst"),$("rg")].forEach(e=>{e.classList.remove("go");void e.getBoundingClientRect();e.classList.add("go")})}
-const star=(a,b,n)=>Array.from({length:2*n},(_,i)=>{const t=Math.PI*i/n,r=i%2?b:a;return(Math.cos(t)*r).toFixed(1)+","+(Math.sin(t)*r).toFixed(1)}).join(" ");
-$("bword").textContent=T.burstWord;$("ttl").textContent=T.mapTitle;$("sub").textContent=T.mapSub;document.title=T.pageTitle;$("st1").setAttribute("points",star(28,19,12));$("st2").setAttribute("points",star(20,14,12));
-$("rays").innerHTML=Array.from({length:12},(_,i)=>{const t=Math.PI*2*i/12;return`<line x1="${(Math.cos(t)*34).toFixed(1)}" y1="${(Math.sin(t)*34).toFixed(1)}" x2="${(Math.cos(t)*43).toFixed(1)}" y2="${(Math.sin(t)*43).toFixed(1)}"/>`}).join("");
-/* ---- ροή ---- */
-function intro(){
- const hl=document.createElement("div");hl.id="hello";
- hl.innerHTML=`<div id="bub"><p>${T.helloText||"Έμαθα ότι έχεις γενέθλια, θα με βοηθήσεις να σου παραδώσω το γράμμα;"}</p><div id="zone"><button id="yes" style="left:0;top:0">${T.yes}</button><button id="no" class="alt" style="left:60%;top:0">${T.no}</button></div></div><svg id="hm" viewBox="30 622 170 144"></svg>`;
- document.body.appendChild(hl);
- const m=$("mk").cloneNode(true);m.removeAttribute("transform");m.removeAttribute("style");m.querySelectorAll("[id]").forEach(e=>e.id+="2");m.id="mk2";$("hm").appendChild(m);
- const z=$("zone"),n=$("no"),y=$("yes");
- const run=e=>{e&&e.preventDefault();const zb=z.getBoundingClientRect(),yb=y.getBoundingClientRect(),w=n.offsetWidth,h=n.offsetHeight;let x,t,k=0;
-  do{x=Math.random()*(z.clientWidth-w);t=Math.random()*(z.clientHeight-h);k++}while(k<25&&x+zb.left<yb.right+10&&x+w+zb.left>yb.left-10&&t+zb.top<yb.bottom+10&&t+h+zb.top>yb.top-10);
-  n.style.left=x+"px";n.style.top=t+"px"};
- n.addEventListener("pointerenter",e=>{if(e.pointerType==="mouse")run(e)});
- n.addEventListener("pointerdown",run);n.addEventListener("click",e=>e.preventDefault());n.addEventListener("focus",()=>{run();n.blur()});
- y.onclick=async()=>{hl.classList.add("out");setTimeout(()=>hl.remove(),700);show("<p>"+T.walk1+"</p>");await new Promise(r=>setTimeout(r,1300));ov=0;await fly(95,125,170);await walk(0,1,1500);gate()}
-}
-function gate(){
- const g=T.gate;
- show(`<h2>${T.gateTitle}</h2><p>${g.q}</p><div class="opts">${g.a.map((t,i)=>`<button data-i="${i}">${t}</button>`).join("")}</div>`);
- document.querySelectorAll("[data-i]").forEach(b=>b.onclick=()=>pick(+b.dataset.i));
-}
-async function pick(i){
- const ok=i===T.gate.ok;S.att.push((ok?"ΣΩΣΤΟ: ":"ΛΑΘΟΣ: ")+T.gate.a[i]+" ("+new Date().toLocaleTimeString("el-GR")+")");
- if(ok){show("<p>"+T.walk2+"</p>");await walk(1,6,4200);return stop1()}
- show(`<h2>${T.failTitle}</h2><p>${T.failText}</p><button id="again">${T.retry}</button>`);$("again").onclick=gate;
- if(!S.fail){S.fail=1;send(T.mailFail,{attempts:S.att.join(" | ")})}
-}
-function stop1(){
- let n=0;show(`<h2>${T.st1Title}</h2><p>${T.st1Text}</p><div id="nx"></div>`);
- $("mk").onclick=()=>{clang(1);if(++n===1){$("nx").innerHTML=`<button id="c1">${T.next}</button>`;$("c1").onclick=async()=>{$("mk").onclick=null;show("<p>"+T.walk3+"</p>");await walk(6,9,3500);stop2()}}}
-}
-function stop2(){
- show(`<h2>${T.st2Title}</h2><p>${T.st2Text}</p><input id="sl" type="range" min="0" max="100" value="0"><div id="nx2"></div>`);
- const sl=$("sl");sl.oninput=()=>{const v=sl.value/100;$("lift").setAttribute("transform",`rotate(${-70*(1-v)} 406 239)`);
-  if(v===1&&!sl.dataset.d){sl.dataset.d=1;sl.disabled=true;$("nx2").innerHTML=`<button id="c2">${T.next}</button>`;$("c2").onclick=async()=>{show("<p>"+T.walk4+"</p>");await walk(9,14,5000);arrive()}}};
-}
-function arrive(){letter()}
-function letter(){
- show(`<h2>${T.arriveTitle}</h2><p>${T.arriveText}</p><p><b>${T.pickGift}</b></p><div class="opts g">${T.gifts.map((g,i)=>`<button data-g="${i}">${g[0]} ${g[1]}</button>`).join("")}</div>`);
- document.querySelectorAll("[data-g]").forEach(b=>b.onclick=()=>{S.gift=+b.dataset.g;S.opt=null;detail()});
-}
-function detail(){
- const g=T.gifts[S.gift],cp=S.gift===T.couponIndex;
- show(`<h2>${g[0]} ${g[1]}</h2><p>${T.pickOption}</p><div class="opts g">${g[2].map((t,i)=>`<button data-o="${i}">${t}</button>`).join("")}</div>${cp?`<p style="margin-top:12px">${T.emailAsk}</p><input id="em" type="email" placeholder="${T.emailPh}" autocomplete="email">`:""}<p style="font-size:13px;opacity:.7;margin-top:10px">${g[3]}</p><div style="display:flex;gap:8px"><button id="bk" class="alt">${T.back}</button><button id="snd" disabled>${T.send}</button></div><p id="err" style="color:#b03a2e;margin-top:10px"></p>`);
- const chk=()=>{$("snd").disabled=!(S.opt!=null&&(!cp||/^\S+@\S+\.\S+$/.test($("em").value.trim())))};
- document.querySelectorAll("[data-o]").forEach(b=>b.onclick=()=>{S.opt=+b.dataset.o;document.querySelectorAll("[data-o]").forEach(x=>x.classList.toggle("sel",x===b));chk()});
- if(cp)$("em").oninput=chk;
- $("bk").onclick=letter;
- $("snd").onclick=async()=>{const b=$("snd");b.disabled=true;b.textContent=T.sending;
-  const ok=await send(T.mailDone,{gift:g[1],gift_option:g[2][S.opt],coupon_email:cp?$("em").value.trim():"-",gate_attempts:S.att.join(" | ")});
-  if(ok)ready();
-  else{b.disabled=false;b.textContent=T.send;$("err").textContent=T.sendFail}};
-}
-function ready(){
- show(`<h2>${T.sentTitle||"Τέλεια επιλογή! 🎁"}</h2><p>${T.sentText||"Το μαϊμουδάκι έχει ένα τελευταίο πράγμα να σου παραδώσει: το γράμμα."}</p><button id="op">${T.openLetter}</button>`);
- $("op").onclick=finale;
-}
-/* ---- φινάλε ---- */
-const fx=$("fx"),g2=fx.getContext("2d"),CL=["#E58BAE","#F4C95D","#BFE6D5","#CDB8F0","#FFB6C9","#9ED4E0"],R=Math.random;let ps=[],on=0;
-function loop(){fx.width=innerWidth;fx.height=innerHeight;ps=ps.filter(p=>p.y<fx.height+30&&p.l>0);
- ps.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.vy+=p.g;p.r+=p.vr;p.l--;g2.save();g2.globalAlpha=Math.min(1,p.l/30);g2.fillStyle=p.c;g2.translate(p.x,p.y);g2.rotate(p.r);g2.fillRect(-p.w/2,-p.h/2,p.w,p.h);g2.restore()});
- if(ps.length)requestAnimationFrame(loop);else{on=0;fx.width=0}}
-const add=a=>{ps.push(...a);if(!on){on=1;loop()}};
-const confetti=n=>add(Array.from({length:n},()=>({x:R()*innerWidth,y:-20-R()*200,vx:(R()-.5)*3,vy:2+R()*3,g:.02,w:6+R()*6,h:4+R()*5,r:R()*6,vr:(R()-.5)*.3,l:420,c:CL[R()*6|0]})));
-const firework=(x,y)=>{const c=CL[R()*6|0];add(Array.from({length:46},()=>{const a=R()*6.283,v=1.5+R()*4;return{x,y,vx:Math.cos(a)*v,vy:Math.sin(a)*v,g:.06,w:4,h:4,r:0,vr:0,l:70,c}}))};
-async function finale(){
- const F=T.finale;
- const e=document.createElement("div");e.id="end";
- e.innerHTML=`<div class="env"><div class="flap"></div><div class="ebody"><div class="paper"><div class="big">${F.title}${F.name?", "+F.name:""}!</div><div class="wt">${F.wish}</div>${F.sign?`<div class="sg">${F.sign}</div>`:""}</div><div class="pocket"></div></div></div><svg id="hm3" viewBox="30 622 170 144"></svg><button id="enc">${T.again}</button>`;
- document.body.appendChild(e);
- const m=$("mk").cloneNode(true);m.removeAttribute("transform");m.removeAttribute("style");m.querySelector("#ltr").remove();m.querySelectorAll("[id]").forEach(x=>x.id+="3");m.id="mk3";$("hm3").appendChild(m);
- const party=()=>{[0,700,1400].forEach(t=>setTimeout(()=>clap("3"),t));confetti(140);[0,350,700,1050,1400].forEach(t=>setTimeout(()=>firework(innerWidth*(.15+R()*.7),innerHeight*(.1+R()*.3)),t));setTimeout(()=>confetti(100),900)};
- $("enc").onclick=party;party();
-}
-addEventListener("resize",setCam);if(window.ResizeObserver)new ResizeObserver(setCam).observe($("map"));setCam();place(0);intro();
-</script></body></html>
+<html lang="el">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+    <title>Ένα γράμμα για σένα</title>
+    <style>
+        :root {
+            --cream: #FFF3E8;
+            --pink: #E58BAE;
+            --ink: #6B4A66;
+            --soft: #F8D7E3
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent
+        }
+
+        html,
+        body {
+            margin: 0;
+            background: var(--cream);
+            color: var(--ink);
+            font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif
+        }
+
+        #app {
+            max-width: 480px;
+            margin: 0 auto;
+            height: 100dvh;
+            display: flex;
+            flex-direction: column;
+            padding-top: env(safe-area-inset-top)
+        }
+
+        #map {
+            position: relative;
+            flex: 1;
+            min-height: 0;
+            background: var(--cream);
+            overflow: hidden
+        }
+
+        #map svg {
+            width: 100%;
+            height: 100%;
+            display: block
+        }
+
+        #panel {
+            flex: none;
+            max-height: 44dvh;
+            overflow: auto;
+            background: #fff;
+            border-radius: 22px 22px 0 0;
+            margin-top: -18px;
+            position: relative;
+            z-index: 1;
+            padding: 14px 16px calc(14px + env(safe-area-inset-bottom));
+            box-shadow: 0 -6px 20px #e58bae22
+        }
+
+        h2 {
+            margin: 0 0 6px;
+            font-size: 18px
+        }
+
+        p {
+            margin: 0 0 10px;
+            line-height: 1.4;
+            font-size: 15px
+        }
+
+        button {
+            font: inherit;
+            font-weight: 600;
+            border: 0;
+            border-radius: 999px;
+            padding: 10px 20px;
+            min-height: 44px;
+            background: var(--pink);
+            color: #fff;
+            cursor: pointer
+        }
+
+        button:disabled {
+            opacity: .45
+        }
+
+        button.alt {
+            background: var(--soft);
+            color: var(--ink)
+        }
+
+        .opts {
+            display: grid;
+            gap: 8px
+        }
+
+        .opts.g {
+            grid-template-columns: 1fr 1fr
+        }
+
+        .opts button {
+            background: var(--soft);
+            color: var(--ink);
+            text-align: left;
+            border-radius: 16px;
+            padding: 9px 12px;
+            font-size: 14px
+        }
+
+        .opts button.sel {
+            background: var(--pink);
+            color: #fff
+        }
+
+        input[type=email] {
+            width: 100%;
+            font: inherit;
+            padding: 12px 14px;
+            border: 2px solid var(--soft);
+            border-radius: 14px;
+            margin: 0 0 10px
+        }
+
+        input[type=range] {
+            width: 100%;
+            accent-color: var(--pink);
+            height: 40px
+        }
+
+        #zone {
+            position: relative;
+            height: 84px
+        }
+
+        #zone button {
+            position: absolute
+        }
+
+        #dbg {
+            display: none;
+            white-space: pre-wrap;
+            font: 11px monospace;
+            background: #f6f0f8;
+            padding: 8px;
+            margin: 0
+        }
+
+        .lb {
+            font-size: 18px;
+            font-weight: 500;
+            fill: #6B4A66;
+            paint-order: stroke;
+            stroke: #fff;
+            stroke-width: 4px;
+            stroke-linejoin: round
+        }
+
+        .lb2 {
+            font-size: 13px;
+            font-style: italic;
+            fill: #6FAEC0
+        }
+
+        #fx {
+            position: fixed;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9
+        }
+
+        #fin {
+            position: absolute;
+            inset: 0;
+            overflow: hidden;
+            pointer-events: none;
+            text-align: center;
+            padding-top: 7%
+        }
+
+        .big {
+            display: inline-block;
+            max-width: 92%;
+            font-size: clamp(30px, 9vw, 64px);
+            line-height: 1.05;
+            font-weight: 900;
+            background: linear-gradient(90deg, #E58BAE, #F4A261, #9B72CF);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            filter: drop-shadow(0 0 3px #fff) drop-shadow(0 3px 0 #fff);
+            animation: zoom .9s cubic-bezier(.2, 1.4, .4, 1) both
+        }
+
+        @keyframes zoom {
+            from {
+                transform: scale(.2);
+                opacity: 0
+            }
+        }
+
+        #panel.fin {
+            max-height: 56dvh
+        }
+
+        .wish {
+            background: #FFF8EF;
+            border: 2px solid #F8D7E3;
+            border-radius: 16px;
+            padding: 14px 16px;
+            margin: 0 0 10px;
+            font: 17px/1.55 Georgia, "Times New Roman", serif;
+            white-space: pre-line;
+            animation: fade 1.2s .8s both
+        }
+
+        .sg {
+            margin-top: 10px;
+            text-align: right;
+            font-style: italic;
+            color: #9B7A96
+        }
+
+        @keyframes fade {
+            from {
+                opacity: 0;
+                transform: translateY(8px)
+            }
+        }
+
+        @keyframes boom {
+            0% {
+                transform: scale(.2) rotate(-25deg);
+                opacity: 0
+            }
+
+            25% {
+                opacity: 1
+            }
+
+            45% {
+                transform: scale(1.25) rotate(6deg)
+            }
+
+            70% {
+                transform: scale(1) rotate(-3deg);
+                opacity: 1
+            }
+
+            100% {
+                transform: scale(1.1) rotate(0);
+                opacity: 0
+            }
+        }
+
+        @keyframes ring {
+            0% {
+                transform: scale(.4);
+                opacity: .9
+            }
+
+            100% {
+                transform: scale(2.6);
+                opacity: 0
+            }
+        }
+
+        #burst.go {
+            animation: boom .9s ease-out both
+        }
+
+        #rg.go {
+            animation: ring .8s ease-out both
+        }
+
+        #hello {
+            position: fixed;
+            inset: 0;
+            z-index: 8;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            background: radial-gradient(circle at 18% 14%, #F8D7E3 0, transparent 45%), radial-gradient(circle at 86% 86%, #E7DAF7 0, transparent 45%), radial-gradient(circle at 86% 12%, #D8F0E3 0, transparent 35%), #FFF3E8
+        }
+
+        #hello.out {
+            opacity: 0;
+            transition: opacity .6s;
+            pointer-events: none
+        }
+
+        #bub {
+            position: relative;
+            width: 100%;
+            max-width: 440px;
+            box-sizing: border-box;
+            background: #fff;
+            border: 4px solid #F2B8CC;
+            border-radius: 30px;
+            padding: 22px 22px 14px;
+            text-align: center;
+            box-shadow: 0 10px 30px #e58bae33;
+            animation: zoom .7s .35s cubic-bezier(.2, 1.4, .4, 1) both
+        }
+
+        #bub::before {
+            content: "";
+            position: absolute;
+            left: 50%;
+            bottom: -27px;
+            margin-left: -20px;
+            border: 20px solid transparent;
+            border-top: 24px solid #F2B8CC;
+            border-bottom: 0
+        }
+
+        #bub::after {
+            content: "";
+            position: absolute;
+            left: 50%;
+            bottom: -19px;
+            margin-left: -16px;
+            border: 16px solid transparent;
+            border-top: 20px solid #fff;
+            border-bottom: 0
+        }
+
+        #bub p {
+            font-size: clamp(18px, 4.6vw, 23px);
+            line-height: 1.35;
+            font-weight: 700;
+            margin: 0 0 14px
+        }
+
+        #hm {
+            width: min(72vw, 300px, 34vh);
+            height: auto;
+            margin-top: 34px;
+            overflow: visible;
+            animation: rise .8s both, bob 2.4s ease-in-out .9s infinite
+        }
+
+        @keyframes rise {
+            from {
+                transform: translateY(40px);
+                opacity: 0
+            }
+        }
+
+        @keyframes bob {
+            50% {
+                transform: translateY(-6px)
+            }
+        }
+
+        #panel p,
+        #panel h2,
+        #bub p {
+            white-space: pre-line
+        }
+
+        #end {
+            position: fixed;
+            inset: 0;
+            z-index: 7;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 24px 16px 32px;
+            background: radial-gradient(circle at 18% 14%, #F8D7E3 0, transparent 45%), radial-gradient(circle at 86% 86%, #E7DAF7 0, transparent 45%), radial-gradient(circle at 86% 12%, #D8F0E3 0, transparent 35%), #FFF3E8
+        }
+
+        .env {
+            width: min(92vw, 440px);
+            margin-top: auto;
+            animation: rise .8s both
+        }
+
+        .flap {
+            height: 112px;
+            background: #D98BA8;
+            clip-path: polygon(0 100%, 50% 0, 100% 100%);
+            position: relative
+        }
+
+        .flap::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: #fff;
+            clip-path: polygon(4% 100%, 50% 12%, 96% 100%)
+        }
+
+        .ebody {
+            position: relative;
+            background: #fff;
+            border: 3px solid #D98BA8;
+            border-radius: 0 0 24px 24px;
+            padding: 16px 16px 0;
+            overflow: hidden
+        }
+
+        .paper {
+            background: #FFF8EF;
+            border: 2px solid #F3E2D2;
+            border-bottom: 0;
+            border-radius: 14px 14px 0 0;
+            padding: 22px 20px 112px;
+            box-shadow: 0 -2px 10px #0001;
+            animation: slide 1s .5s cubic-bezier(.2, .9, .3, 1) both
+        }
+
+        .pocket {
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            height: 100px;
+            background: #D98BA8;
+            clip-path: polygon(0 0, 50% 52%, 100% 0, 100% 100%, 0 100%)
+        }
+
+        .pocket::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: #fff;
+            clip-path: polygon(0 4px, 50% calc(52% + 5px), 100% 4px, 100% 100%, 0 100%)
+        }
+
+        .pocket::before {
+            content: "♥";
+            position: absolute;
+            left: 50%;
+            top: 62px;
+            transform: translateX(-50%);
+            color: #F2849F;
+            font-size: 26px;
+            line-height: 1;
+            z-index: 2
+        }
+
+        #end .big {
+            font-size: clamp(26px, 8vw, 30px);
+            margin-bottom: 12px
+        }
+
+        .wt {
+            font: 17px/1.55 Georgia, "Times New Roman", serif;
+            white-space: pre-line;
+            text-align: left;
+            color: #5B3F57
+        }
+
+        #end .sg {
+            margin-top: 12px
+        }
+
+        #hm3 {
+            width: min(40vw, 150px);
+            margin-top: 18px;
+            overflow: visible
+        }
+
+        #end button {
+            margin: 14px 0 auto
+        }
+
+        @keyframes slide {
+            from {
+                transform: translateY(90px);
+                opacity: 0
+            }
+        }
+
+        .note {
+            font-size: 13px;
+            opacity: .6;
+            margin: 0 0 12px
+        }
+
+        @media (min-width:900px) {
+            body {
+                min-height: 100dvh;
+                display: grid;
+                place-items: center;
+                background: radial-gradient(circle at 12% 18%, #F8D7E3 0, transparent 38%), radial-gradient(circle at 88% 84%, #E7DAF7 0, transparent 40%), radial-gradient(circle at 86% 12%, #D8F0E3 0, transparent 28%), var(--cream)
+            }
+
+            #app {
+                width: 100%;
+                max-width: 1120px;
+                height: min(100dvh, 780px);
+                padding: 32px;
+                flex-direction: row;
+                gap: 26px;
+                align-items: stretch
+            }
+
+            #map {
+                min-width: 0;
+                border-radius: 26px;
+                border: 6px solid #fff;
+                box-shadow: 0 14px 44px #b07a9a33
+            }
+
+            #panel {
+                flex: none;
+                width: 380px;
+                align-self: center;
+                max-height: 100%;
+                margin: 0;
+                padding: 26px 24px;
+                border-radius: 26px;
+                box-shadow: 0 14px 44px #b07a9a33
+            }
+
+            #panel.fin {
+                max-height: 100%
+            }
+
+            h2 {
+                font-size: 24px
+            }
+
+            p {
+                font-size: 17px
+            }
+
+            button {
+                font-size: 17px
+            }
+
+            .opts button {
+                font-size: 16px
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <div id="map"><svg id="svg" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <clipPath id="sh">
+                        <rect x="-40" width="760" height="440" rx="14" />
+                    </clipPath>
+                </defs><text id="ttl" x="340" y="-72" text-anchor="middle" style="font-size:34px;font-weight:700;fill:#6B4A66"></text><text id="sub" x="340" y="-36" text-anchor="middle" style="font-size:18px;fill:#9B7A96"></text>
+                <g clip-path="url(#sh)">
+                    <rect x="-40" width="760" height="440" fill="#FFE6D6" />
+                    <path d="M300 60 q30 -34 60 0 z" fill="#D8F0E3" />
+                    <path d="M450 70 q35 -40 70 0 z" fill="#F8D7E3" />
+                    <path d="M190 300 q30 -34 60 0 z" fill="#E7DAF7" />
+                    <path d="M250 340 q35 -40 70 0 z" fill="#D8F0E3" />
+                    <path d="M540 140 q30 -34 60 0 z" fill="#F8D7E3" />
+                    <polygon points="-40,96 30,92 60,100 80,104 97,109 112,89 140,95 183,92 215,86 240,80 267,76 300,84 326,95 360,104 405,129 430,138 470,152 476,168 462,182 448,196 440,200 430,214 418,228 400,234 390,236 372,228 352,218 336,206 321,195 300,184 270,172 240,162 209,152 193,143 178,136 150,129 124,124 102,121 86,136 70,141 39,145 18,155 -40,165" fill="#CDEBF2" stroke="#F5D3C0" stroke-width="3" stroke-linejoin="round" />
+                    <polygon points="418,250 440,256 455,243 473,229 490,228 505,232 509,226 522,224 535,228 548,236 566,236 584,238 596,246 612,261 618,272 621,280 640,296 660,318 684,334 688,300 684,262 680,222 676,190 671,169 684,150 720,150 720,440 565,440 560,420 548,400 535,383 528,372 517,350 500,346 480,336 457,340 442,318 430,290" fill="#CDEBF2" stroke="#F5D3C0" stroke-width="3" stroke-linejoin="round" />
+                    <ellipse cx="544" cy="248" rx="12" ry="6" fill="#FFE6D6" />
+                    <ellipse cx="543" cy="317" rx="12" ry="8" fill="#FFE6D6" />
+                    <polygon points="540,0 575,0 592,30 612,62 640,90 660,118 720,128 720,150 655,150 630,122 605,96 580,60 560,28" fill="#CDEBF2" stroke="#F5D3C0" stroke-width="3" stroke-linejoin="round" />
+                    <ellipse cx="296" cy="226" rx="14" ry="4" fill="#FFE9B8" />
+                    <line x1="296" y1="214" x2="296" y2="226" stroke="#B88A6A" stroke-width="2" />
+                    <path d="M284 214 Q296 200 308 214 Z" fill="#FFB6C9" />
+                    <polygon points="626,216 640,207 654,216" fill="#E7DAF7" stroke="#B79BDB" />
+                    <path d="M630 216v10M640 216v10M650 216v10" stroke="#B79BDB" stroke-width="3" />
+                    <rect x="624" y="226" width="32" height="4" fill="#E7DAF7" stroke="#B79BDB" />
+                    <path d="M130 175l5-12 5 12zM148 182l5-12 5 12zM330 285l5-12 5 12zM200 235l5-12 5 12zM530 190l5-12 5 12z" fill="#BFE6D5" />
+                    <rect x="412" y="228" width="4" height="22" fill="#F5D3C0" />
+                    <rect x="420" y="228" width="4" height="22" fill="#F5D3C0" />
+                    <rect x="416" y="228" width="4" height="22" fill="#CDEBF2" />
+                    <line x1="97" y1="108" x2="103" y2="124" stroke="#F29AB8" stroke-width="4" stroke-linecap="round" />
+                    <g id="lift" transform="rotate(-70 406 239)">
+                        <line x1="406" y1="239" x2="430" y2="239" stroke="#F29AB8" stroke-width="3" stroke-linecap="round" />
+                    </g>
+                    <polyline id="route" fill="none" stroke="#E58BAE" stroke-width="4" stroke-dasharray="1 9" stroke-linecap="round" stroke-linejoin="round" />
+                    <g id="marks"></g>
+                    <g id="mk" style="cursor:pointer">
+                        <path d="M126 735 Q164 748 162 716 Q160 700 148 704" fill="none" stroke="#C98F6B" stroke-width="7" stroke-linecap="round" />
+                        <ellipse cx="88" cy="748" rx="14" ry="9" fill="#C98F6B" />
+                        <ellipse cx="114" cy="748" rx="14" ry="9" fill="#C98F6B" />
+                        <ellipse cx="100" cy="712" rx="28" ry="34" fill="#F7B6C8" stroke="#7A4E3A" stroke-width="2" />
+                        <g id="ltr" transform="rotate(-12 116 712)">
+                            <rect x="102" y="699" width="28" height="19" rx="2" fill="#fff" stroke="#D98BA8" stroke-width="1.5" />
+                            <path d="M102 699 L116 710 L130 699" fill="none" stroke="#D98BA8" stroke-width="1.5" />
+                            <path d="M116 716 l-3.5 -3.5 a2.2 2.2 0 0 1 3.5 -2.6 a2.2 2.2 0 0 1 3.5 2.6 z" fill="#F2849F" />
+                        </g>
+                        <rect x="106" y="717" width="22" height="15" rx="3" fill="#EFA0B8" stroke="#D98BA8" stroke-width="1.5" />
+                        <path d="M109 721h16" stroke="#D98BA8" stroke-dasharray="2 2" />
+                        <line id="al" x1="78" y1="702" x2="54" y2="676" stroke="#C98F6B" stroke-width="11" stroke-linecap="round" />
+                        <line id="ar" x1="124" y1="698" x2="146" y2="676" stroke="#C98F6B" stroke-width="11" stroke-linecap="round" />
+                        <circle cx="68" cy="650" r="12" fill="#C98F6B" />
+                        <circle cx="132" cy="650" r="12" fill="#C98F6B" />
+                        <circle cx="68" cy="650" r="6" fill="#F3D2B3" />
+                        <circle cx="132" cy="650" r="6" fill="#F3D2B3" />
+                        <circle cx="100" cy="655" r="30" fill="#C98F6B" />
+                        <ellipse cx="100" cy="662" rx="21" ry="18" fill="#F3D2B3" />
+                        <circle cx="91" cy="655" r="3.2" fill="#4A3328" />
+                        <circle cx="109" cy="655" r="3.2" fill="#4A3328" />
+                        <ellipse cx="100" cy="666" rx="6" ry="4" fill="#E9B896" />
+                        <path d="M93 672 Q100 678 107 672" fill="none" stroke="#4A3328" stroke-width="2" stroke-linecap="round" />
+                        <circle cx="86" cy="668" r="4" fill="#F7B6C8" opacity=".8" />
+                        <circle cx="114" cy="668" r="4" fill="#F7B6C8" opacity=".8" />
+                        <g id="cl" transform="translate(54,676)">
+                            <circle r="15" fill="#F4C95D" stroke="#B8892B" stroke-width="2" />
+                            <circle r="10" fill="none" stroke="#E0A93A" stroke-width="1.5" />
+                            <circle r="4" fill="#D9A93C" stroke="#B8892B" stroke-width="1.5" />
+                            <path d="M-10 -6 A11 11 0 0 1 -3 -11" fill="none" stroke="#FFF3B8" stroke-width="2" stroke-linecap="round" />
+                        </g>
+                        <g id="cr" transform="translate(146,676)">
+                            <circle r="15" fill="#F4C95D" stroke="#B8892B" stroke-width="2" />
+                            <circle r="10" fill="none" stroke="#E0A93A" stroke-width="1.5" />
+                            <circle r="4" fill="#D9A93C" stroke="#B8892B" stroke-width="1.5" />
+                            <path d="M-10 -6 A11 11 0 0 1 -3 -11" fill="none" stroke="#FFF3B8" stroke-width="2" stroke-linecap="round" />
+                        </g>
+                    </g>
+                    <g id="bpos">
+                        <circle id="rg" r="24" fill="none" stroke="#F4C95D" stroke-width="3" opacity="0" />
+                        <g id="burst" opacity="0">
+                            <g id="rays" stroke="#E58BAE" stroke-width="2.5" stroke-linecap="round"></g>
+                            <polygon id="st1" fill="#FFE066" stroke="#E58BAE" stroke-width="2.5" stroke-linejoin="round" />
+                            <polygon id="st2" fill="#FFF3B8" /><text id="bword" y="5" text-anchor="middle" style="font-size:13px;font-weight:900;fill:#C2476F">ΤΣΙΝ!</text>
+                        </g>
+                    </g>
+                </g>
+                <rect x="-40" width="760" height="440" rx="14" fill="none" stroke="#F2B8CC" stroke-width="3" />
+            </svg>
+        </div>
+        <div id="panel"></div>
+        <pre id="dbg"></pre>
+    </div>
+    <canvas id="fx"></canvas>
+    <script src="config.js"></script>
+    <script>
+        window.addEventListener("error", function(e) {
+            if ((e.filename || "").indexOf("texts.js") > -1) window.TEXTS_ERR = e.message + " (γραμμή " + e.lineno + ")"
+        })
+    </script>
+    <script src="texts.js"></script>
+    <script>
+        /* ====== Settings ====== */
+        const CFG = {
+            endpoint: "https://api.web3forms.com/submit",
+            key: window.WEB3FORMS_KEY||"ΒΑΛΕ_ΕΔΩ_ΤΟ_KEY" // key from file config.js . If there isn't a key the demo mode is activated
+        };
+        const T = window.TEXTS; // texts are in the file texts.js
+        if (!T) {
+            document.body.innerHTML = "<p style='padding:24px'>Λείπει ή έχει λάθος το αρχείο texts.js" + (window.TEXTS_ERR ? "<br><small>" + window.TEXTS_ERR + "</small>" : "") + "</p>";
+            throw new Error("texts.js missing")
+        }
+        /* ==================================== */
+        const $ = id => document.getElementById(id),
+            S = {
+                att: [],
+                fail: 0,
+                gift: null
+            };
+        const show = h => {
+            $("panel").innerHTML = h
+        };
+        const dbg = t => {
+            const d = $("dbg");
+            d.style.display = "block";
+            d.textContent += t + "\n\n"
+        };
+        let vid = "?",
+            visits = 1;
+        try {
+            vid = localStorage.vid || (localStorage.vid = (crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).slice(2)));
+            visits = (+localStorage.visits || 0) + 1;
+            localStorage.visits = visits
+        } catch (e) {}
+        const info = () => {
+            const n = navigator,
+                s = screen;
+            return {
+                visitor_id: vid,
+                visit_no: visits,
+                time: new Date().toString(),
+                timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+                languages: (n.languages || [n.language]).join(","),
+                user_agent: n.userAgent,
+                platform: n.platform,
+                screen: s.width + "x" + s.height + " @" + devicePixelRatio + "x",
+                viewport: innerWidth + "x" + innerHeight,
+                touch_points: n.maxTouchPoints,
+                referrer: document.referrer || "-"
+            }
+        };
+        async function send(title, extra) {
+            const d = {
+                    ...extra,
+                    ...info()
+                },
+                p = {
+                    access_key: CFG.key,
+                    subject: T.mailSubject + " – " + title,
+                    from_name: "Γράμμα γενεθλίων",
+                    message: Object.entries(d).map(([k, v]) => k + ": " + v).join("\n")
+                };
+            if (CFG.key.startsWith("ΒΑΛΕ")) {
+                dbg("[ΔΟΚΙΜΗ] " + p.subject + "\n" + p.message);
+                return true
+            }
+            try {
+                const r = await fetch(CFG.endpoint, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Accept: "application/json"
+                    },
+                    body: JSON.stringify(p)
+                });
+                const j = await r.json().catch(() => ({}));
+                return r.ok && j.success !== false
+            } catch (e) {
+                return false
+            }
+        }
+        /* ---- Map, camera, monkey ---- */
+        const P = [
+            [86, 136],
+            [104, 128],
+            [140, 136],
+            [178, 142],
+            [209, 158],
+            [260, 181],
+            [321, 201],
+            [352, 224],
+            [390, 242],
+            [418, 240],
+            [440, 232],
+            [473, 222],
+            [509, 218],
+            [559, 206],
+            [608, 225]
+        ];
+        const L = [0];
+        for (let i = 1; i < P.length; i++) L[i] = L[i - 1] + Math.hypot(P[i][0] - P[i - 1][0], P[i][1] - P[i - 1][1]);
+        const at = d => {
+            let i = 1;
+            while (i < P.length - 1 && L[i] < d) i++;
+            const k = (d - L[i - 1]) / (L[i] - L[i - 1]);
+            return [P[i - 1][0] + (P[i][0] - P[i - 1][0]) * k, P[i - 1][1] + (P[i][1] - P[i - 1][1]) * k]
+        };
+        $("route").setAttribute("points", P.join(" "));
+        $("marks").innerHTML = [0, 1, 6, 9, 14].map(i => `<circle cx="${P[i][0]}" cy="${P[i][1]}" r="${i<2?8:9}" fill="#fff" stroke="#E58BAE" stroke-width="4"/>`).join("") + [
+                [86, 160, T.map[0], "middle"],
+                [100, 76, T.map[1], "middle"],
+                [332, 170, T.map[2], "middle"],
+                [420, 268, T.map[3], "end"],
+                [608, 200, T.map[4], "middle"]
+            ].map(a => `<text class="lb" x="${a[0]}" y="${a[1]}" text-anchor="${a[3]}">${a[2]}</text>`).join("") +
+            `<text class="lb2" x="230" y="118" text-anchor="middle">${T.sea[0]}</text><text class="lb2" x="505" y="300" text-anchor="middle">${T.sea[1]}</text>`;
+        let ov = 1,
+            cam = {
+                x: 340,
+                y: 220,
+                w: 680
+            },
+            cur = P[0];
+        const cl = (v, a, b) => Math.min(Math.max(v, Math.min(a, b)), Math.max(a, b));
+        const setCam = () => {
+            const m = $("map");
+            if (ov) cam.w = Math.max(780, 660 * m.clientWidth / (m.clientHeight || 1));
+            const h = cam.w * m.clientHeight / m.clientWidth,
+                x = cl(cam.x, cam.w / 2 - 40, 720 - cam.w / 2),
+                y = cl(cam.y, h / 2, 440 - h / 2);
+            $("svg").setAttribute("viewBox", `${x-cam.w/2} ${y-h/2} ${cam.w} ${h}`)
+        };
+
+        function fly(x, y, w, ms = 900) {
+            const a = {
+                    ...cam
+                },
+                t0 = performance.now();
+            return new Promise(r => {
+                (function f(t) {
+                    const k = Math.min(1, (t - t0) / ms),
+                        e = k < .5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2;
+                    cam = {
+                        x: a.x + (x - a.x) * e,
+                        y: a.y + (y - a.y) * e,
+                        w: a.w + (w - a.w) * e
+                    };
+                    setCam();
+                    k < 1 ? requestAnimationFrame(f) : r()
+                })(t0)
+            })
+        }
+
+        function place(d, bob = 0) {
+            cur = at(d);
+            $("mk").setAttribute("transform", `translate(${cur[0]-47.6},${cur[1]-360.3-bob}) scale(.476)`)
+        }
+
+        function walk(a, b, ms) {
+            return new Promise(r => {
+                const d0 = L[a],
+                    d1 = L[b],
+                    t0 = performance.now();
+                (function f(t) {
+                    const k = Math.min(1, (t - t0) / ms);
+                    place(d0 + (d1 - d0) * k, Math.abs(Math.sin(k * ms / 90)) * 2);
+                    cam.x = cur[0];
+                    cam.y = cur[1] - 10;
+                    setCam();
+                    k < 1 ? requestAnimationFrame(f) : r()
+                })(t0)
+            })
+        }
+
+        function clap(q = "") {
+            const t0 = performance.now();
+            (function f(t) {
+                const k = Math.min(1, (t - t0) / 600),
+                    e = Math.abs(Math.sin(k * Math.PI * 2));
+                [
+                    ["l", 54, 676, 90, 688],
+                    ["r", 146, 676, 110, 688]
+                ].forEach(([s, a, b, c, d]) => {
+                    const x = a + (c - a) * e,
+                        y = b + (d - b) * e;
+                    $("c" + s + q).setAttribute("transform", `translate(${x},${y})`);
+                    const l = $("a" + s + q);
+                    l.setAttribute("x2", x);
+                    l.setAttribute("y2", y)
+                });
+                if (k < 1) requestAnimationFrame(f)
+            })(t0)
+        }
+
+        function clang(w) {
+            clap();
+            if (!w) return;
+            $("bpos").setAttribute("transform", `translate(${cur[0]},${cur[1]-80})`);
+            [$("burst"), $("rg")].forEach(e => {
+                e.classList.remove("go");
+                void e.getBoundingClientRect();
+                e.classList.add("go")
+            })
+        }
+        const star = (a, b, n) => Array.from({
+            length: 2 * n
+        }, (_, i) => {
+            const t = Math.PI * i / n,
+                r = i % 2 ? b : a;
+            return (Math.cos(t) * r).toFixed(1) + "," + (Math.sin(t) * r).toFixed(1)
+        }).join(" ");
+        $("bword").textContent = T.burstWord;
+        $("ttl").textContent = T.mapTitle;
+        $("sub").textContent = T.mapSub;
+        document.title = T.pageTitle;
+        $("st1").setAttribute("points", star(28, 19, 12));
+        $("st2").setAttribute("points", star(20, 14, 12));
+        $("rays").innerHTML = Array.from({
+            length: 12
+        }, (_, i) => {
+            const t = Math.PI * 2 * i / 12;
+            return `<line x1="${(Math.cos(t)*34).toFixed(1)}" y1="${(Math.sin(t)*34).toFixed(1)}" x2="${(Math.cos(t)*43).toFixed(1)}" y2="${(Math.sin(t)*43).toFixed(1)}"/>`
+        }).join("");
+
+        /* ---- Flow ---- */
+        function intro() {
+            const hl = document.createElement("div");
+            hl.id = "hello";
+            hl.innerHTML = `<div id="bub"><p>${T.helloText}</p><div id="zone"><button id="yes" style="left:0;top:0">${T.yes}</button><button id="no" class="alt" style="left:60%;top:0">${T.no}</button></div></div><svg id="hm" viewBox="30 622 170 144"></svg>`;
+            document.body.appendChild(hl);
+            const m = $("mk").cloneNode(true);
+            m.removeAttribute("transform");
+            m.removeAttribute("style");
+            m.querySelectorAll("[id]").forEach(e => e.id += "2");
+            m.id = "mk2";
+            $("hm").appendChild(m);
+            const z = $("zone"),
+                n = $("no"),
+                y = $("yes");
+            const run = e => {
+                e && e.preventDefault();
+                const zb = z.getBoundingClientRect(),
+                    yb = y.getBoundingClientRect(),
+                    w = n.offsetWidth,
+                    h = n.offsetHeight;
+                let x, t, k = 0;
+                do {
+                    x = Math.random() * (z.clientWidth - w);
+                    t = Math.random() * (z.clientHeight - h);
+                    k++
+                } while (k < 25 && x + zb.left < yb.right + 10 && x + w + zb.left > yb.left - 10 && t + zb.top < yb.bottom + 10 && t + h + zb.top > yb.top - 10);
+                n.style.left = x + "px";
+                n.style.top = t + "px"
+            };
+            n.addEventListener("pointerenter", e => {
+                if (e.pointerType === "mouse") run(e)
+            });
+            n.addEventListener("pointerdown", run);
+            n.addEventListener("click", e => e.preventDefault());
+            n.addEventListener("focus", () => {
+                run();
+                n.blur()
+            });
+            y.onclick = async () => {
+                hl.classList.add("out");
+                setTimeout(() => hl.remove(), 700);
+                show("<p>" + T.walk1 + "</p>");
+                await new Promise(r => setTimeout(r, 1300));
+                ov = 0;
+                await fly(95, 125, 170);
+                await walk(0, 1, 1500);
+                gate()
+            }
+        }
+
+        function gate() {
+            const g = T.gate;
+            show(`<h2>${T.gateTitle}</h2><p class="note">${T.gateNote}</p><p>${g.q}</p><div class="opts">${g.a.map((t,i)=>`<button data-i="${i}">${t}</button>`).join("")}</div>`);
+            document.querySelectorAll("[data-i]").forEach(b => b.onclick = () => pick(+b.dataset.i));
+        }
+        async function pick(i) {
+            const ok = i === T.gate.ok;
+            S.att.push((ok ? "ΣΩΣΤΟ: " : "ΛΑΘΟΣ: ") + T.gate.a[i] + " (" + new Date().toLocaleTimeString("el-GR") + ")");
+            if (ok) {
+                show("<p>" + T.walk2 + "</p>");
+                await walk(1, 6, 4200);
+                return stop1()
+            }
+            show(`<h2>${T.failTitle}</h2><p>${T.failText}</p><button id="again">${T.retry}</button>`);
+            $("again").onclick = gate;
+            if (!S.fail) {
+                S.fail = 1;
+                send(T.mailFail, {
+                    attempts: S.att.join(" | ")
+                })
+            }
+        }
+
+        function stop1() {
+            let n = 0;
+            show(`<h2>${T.st1Title}</h2><p>${T.st1Text}</p><div id="nx"></div>`);
+            $("mk").onclick = () => {
+                clang(1);
+                if (++n === 1) {
+                    $("nx").innerHTML = `<button id="c1">${T.next}</button>`;
+                    $("c1").onclick = async () => {
+                        $("mk").onclick = null;
+                        show("<p>" + T.walk3 + "</p>");
+                        await walk(6, 9, 3500);
+                        stop2()
+                    }
+                }
+            }
+        }
+
+        function stop2() {
+            show(`<h2>${T.st2Title}</h2><p>${T.st2Text}</p><input id="sl" type="range" min="0" max="100" value="0"><div id="nx2"></div>`);
+            const sl = $("sl");
+            sl.oninput = () => {
+                const v = sl.value / 100;
+                $("lift").setAttribute("transform", `rotate(${-70*(1-v)} 406 239)`);
+                if (v === 1 && !sl.dataset.d) {
+                    sl.dataset.d = 1;
+                    sl.disabled = true;
+                    $("nx2").innerHTML = `<button id="c2">${T.next}</button>`;
+                    $("c2").onclick = async () => {
+                        show("<p>" + T.walk4 + "</p>");
+                        await walk(9, 14, 5000);
+                        arrive()
+                    }
+                }
+            };
+        }
+
+        function arrive() {
+            letter()
+        }
+
+        function letter() {
+            show(`<h2>${T.arriveTitle}</h2><p>${T.arriveText}</p><p><b>${T.pickGift}</b></p><div class="opts g">${T.gifts.map((g,i)=>`<button data-g="${i}">${g[0]} ${g[1]}</button>`).join("")}</div>`);
+            document.querySelectorAll("[data-g]").forEach(b => b.onclick = () => {
+                S.gift = +b.dataset.g;
+                S.opt = null;
+                detail()
+            });
+        }
+
+        function detail() {
+            const g = T.gifts[S.gift],
+                cp = S.gift === T.couponIndex;
+            show(`<h2>${g[0]} ${g[1]}</h2><p>${T.pickOption}</p><div class="opts g">${g[2].map((t,i)=>`<button data-o="${i}">${t}</button>`).join("")}</div>${cp?`<p style="margin-top:12px">${T.emailAsk}</p><input id="em" type="email" placeholder="${T.emailPh}" autocomplete="email">`:""}<p style="font-size:13px;opacity:.7;margin-top:10px">${g[3]}</p><div style="display:flex;gap:8px"><button id="bk" class="alt">${T.back}</button><button id="snd" disabled>${T.send}</button></div><p id="err" style="color:#b03a2e;margin-top:10px"></p>`);
+            const chk = () => {
+                $("snd").disabled = !(S.opt != null && (!cp || /^\S+@\S+\.\S+$/.test($("em").value.trim())))
+            };
+            document.querySelectorAll("[data-o]").forEach(b => b.onclick = () => {
+                S.opt = +b.dataset.o;
+                document.querySelectorAll("[data-o]").forEach(x => x.classList.toggle("sel", x === b));
+                chk()
+            });
+            if (cp) $("em").oninput = chk;
+            $("bk").onclick = letter;
+            $("snd").onclick = async () => {
+                const b = $("snd");
+                b.disabled = true;
+                b.textContent = T.sending;
+                const ok = await send(T.mailDone, {
+                    gift: g[1],
+                    gift_option: g[2][S.opt],
+                    coupon_email: cp ? $("em").value.trim() : "-",
+                    gate_attempts: S.att.join(" | ")
+                });
+                if (ok) ready();
+                else {
+                    b.disabled = false;
+                    b.textContent = T.send;
+                    $("err").textContent = T.sendFail
+                }
+            };
+        }
+
+        function ready() {
+            show(`<h2>${T.sentTitle}</h2><p>${T.sentText}</p><button id="op">${T.openLetter}</button>`);
+            $("op").onclick = finale;
+        }
+        
+        /* ---- Finale ---- */
+        const fx = $("fx"),
+            g2 = fx.getContext("2d"),
+            CL = ["#E58BAE", "#F4C95D", "#BFE6D5", "#CDB8F0", "#FFB6C9", "#9ED4E0"],
+            R = Math.random;
+        let ps = [],
+            on = 0;
+
+        function loop() {
+            fx.width = innerWidth;
+            fx.height = innerHeight;
+            ps = ps.filter(p => p.y < fx.height + 30 && p.l > 0);
+            ps.forEach(p => {
+                p.x += p.vx;
+                p.y += p.vy;
+                p.vy += p.g;
+                p.r += p.vr;
+                p.l--;
+                g2.save();
+                g2.globalAlpha = Math.min(1, p.l / 30);
+                g2.fillStyle = p.c;
+                g2.translate(p.x, p.y);
+                g2.rotate(p.r);
+                g2.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+                g2.restore()
+            });
+            if (ps.length) requestAnimationFrame(loop);
+            else {
+                on = 0;
+                fx.width = 0
+            }
+        }
+        const add = a => {
+            ps.push(...a);
+            if (!on) {
+                on = 1;
+                loop()
+            }
+        };
+        const confetti = n => add(Array.from({
+            length: n
+        }, () => ({
+            x: R() * innerWidth,
+            y: -20 - R() * 200,
+            vx: (R() - .5) * 3,
+            vy: 2 + R() * 3,
+            g: .02,
+            w: 6 + R() * 6,
+            h: 4 + R() * 5,
+            r: R() * 6,
+            vr: (R() - .5) * .3,
+            l: 420,
+            c: CL[R() * 6 | 0]
+        })));
+        const firework = (x, y) => {
+            const c = CL[R() * 6 | 0];
+            add(Array.from({
+                length: 46
+            }, () => {
+                const a = R() * 6.283,
+                    v = 1.5 + R() * 4;
+                return {
+                    x,
+                    y,
+                    vx: Math.cos(a) * v,
+                    vy: Math.sin(a) * v,
+                    g: .06,
+                    w: 4,
+                    h: 4,
+                    r: 0,
+                    vr: 0,
+                    l: 70,
+                    c
+                }
+            }))
+        };
+        async function finale() {
+            const F = T.finale;
+            const e = document.createElement("div");
+            e.id = "end";
+            e.innerHTML = `<div class="env"><div class="flap"></div><div class="ebody"><div class="paper"><div class="big">${F.title}${F.name?" "+F.name:""}!</div><div class="wt">${F.wish}</div>${F.sign?`<div class="sg">${F.sign}</div>`:""}</div><div class="pocket"></div></div></div><svg id="hm3" viewBox="30 622 170 144"></svg><button id="enc">${T.again}</button>`;
+            document.body.appendChild(e);
+            const m = $("mk").cloneNode(true);
+            m.removeAttribute("transform");
+            m.removeAttribute("style");
+            m.querySelector("#ltr").remove();
+            m.querySelectorAll("[id]").forEach(x => x.id += "3");
+            m.id = "mk3";
+            $("hm3").appendChild(m);
+            const party = () => {
+                [0, 700, 1400].forEach(t => setTimeout(() => clap("3"), t));
+                confetti(140);
+                [0, 350, 700, 1050, 1400].forEach(t => setTimeout(() => firework(innerWidth * (.15 + R() * .7), innerHeight * (.1 + R() * .3)), t));
+                setTimeout(() => confetti(100), 900)
+            };
+            $("enc").onclick = party;
+            party();
+        }
+        addEventListener("resize", setCam);
+        if (window.ResizeObserver) new ResizeObserver(setCam).observe($("map"));
+        setCam();
+        place(0);
+        intro();
+    </script>
+</body>
+
+</html>
